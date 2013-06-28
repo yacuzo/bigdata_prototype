@@ -5,3 +5,16 @@
  * Time: 1:32 PM
  * To change this template use File | Settings | File Templates.
  */
+
+var ElasticsearchModel;
+
+ElasticsearchModel = Simple.Model.extend({
+    initialize: function(options) {
+        this.url = options.url;
+    },
+
+    fetch: function() {
+
+    }
+
+});

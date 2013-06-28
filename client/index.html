@@ -1,17 +1,22 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+        <link rel="stylesheet" type="text/css" href="libs/jquery-ui-1.10.3.custom/css/vader/jquery-ui-1.10.3.custom.css"/>
         <link rel="stylesheet" type="text/css" href="css/bigdata_prototype.css" />
-        <link rel="stylesheet" type="text/css" href="libs/jquery-ui-1.10.3.custom/css/vader/jquery-ui-1.10.3.custom.min.css"/>
-        <script type="text/javascript" src="libs/jQuery/jquery-1.10.1.min.js" ></script>
-        <script type="text/javascript" src="libs/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js" ></script>
-        <script type="text/javascript" src="libs/elastic/elastic.min.js" ></script>
-        <script type="text/javascript" src="libs/elastic/elastic-jquery-client.min.js" ></script>
-        <script type="text/javascript" src="libs/simple/simple.min.js" ></script>
+        <script type="text/javascript" src="libs/jQuery/jquery-2.0.2.js" ></script>
+        <script type="text/javascript" src="libs/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js" ></script>
+        <script type="text/javascript" src="libs/elastic/elastic.js" ></script>
+        <script type="text/javascript" src="libs/elastic/elastic-jquery-client.js" ></script>
+        <script type="text/javascript" src="libs/simple/simple.js" ></script>
         <script type="text/javascript" src="js/elasticsearchModel.js"></script>
         <script type="text/javascript" src="js/listView.js"></script>
-        <script type="text/javascript" src="js/masterView.js.js"></script>
+        <script type="text/javascript" src="js/masterView.js"></script>
     </head>
 	<body>
+        <div class="main"></div>
+        <script type="text/javascript" >
+            var model = new ElasticsearchModel({url:"bigdata01.dev.bekk.no"});
+            var mView = new MasterView({el:$(".main"), model:model});
+        </script>
 	</body>
 </html>

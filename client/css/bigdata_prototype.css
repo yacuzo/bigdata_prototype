@@ -1,0 +1,28 @@
+body {
+    background: #d3d3d3;
+}
+
+.main {
+    width: 1000px;
+    background: #EEEEEE;
+    margin: 100px auto;
+    padding: 20px 0;
+}
+
+.input {
+    margin: 50px auto;
+    width: 800px;
+    background: #EEEEEE;
+}
+
+input {
+    margin: 75px 10px;
+}
+
+#results {
+    width: 80%;
+    border: solid #555555 1px;
+    margin: 50px auto;
+    padding: 20px 0;
+}
+
