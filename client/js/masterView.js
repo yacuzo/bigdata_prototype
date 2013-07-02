@@ -11,19 +11,22 @@ MasterView = Simple.View.extend({
     //el: $();
     //model: model
     template :  '<form class="input">' +
-                    '<input class="calendar" id="from" type="date">  </input>' +
-                    '<input class="calendar" id="to" type="date">  </input>' +
-                    '<input type="search"/>' +
-                    '<select id="accounts"><option value="base">Select account</option></select>' +
-                    '<input type="submit"/>' +
+                    '<input class="calendar" id="from" name="from" type="date">  </input>' +
+                    '<input class="calendar" id="to" name="to" type="date">  </input>' +
+                    '<input id="text" name="fullDescription" type="search"/>' +
+                    '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
+                    '<input id="submit" type="submit"/>' +
                 '</form>' +
                 '<div id="results"></div>',
 
     initialize: function(options) {//constructor
         this.render();
+        this.model = options.model;
+        this.model.on("GET:done", this.selectDisplay, this);
     },
     events: {
-        "submit #input":"submitData"
+        "submit .input":"gatherData"//,
+        //"submit #submit":"submitData"
     }, //lytte på dom events
 
     render: function () {
@@ -34,17 +37,27 @@ MasterView = Simple.View.extend({
     fillAccountList: function () {
         $.getJSON("textdata/accounts.json", function(data) {
 
-            for (obj in data) {
-                console.log(obj);
+            for (var obj in data) {
                 $("#accounts").append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
             }
 
         });
     },
 
-    submitData: function(data) {
+    gatherData: function(data) {
+        data.stopPropagation();
+        data.preventDefault();
+        var array = $(data.currentTarget).serializeArray();
+        console.log(array);
+        this.model.buildAndExecuteQuery(array);
+    },
+
+    selectDisplay: function(data) {
+        if(this.display)
+            this.display=null;
+
         console.log(data);
-        return false;
+        this.display = new ListView({data:data, el:this.$("#results")});
     }
 
 });

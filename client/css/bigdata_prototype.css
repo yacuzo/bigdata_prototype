@@ -3,7 +3,7 @@ body {
 }
 
 .main {
-    width: 1000px;
+    width: 1400px;
     background: #EEEEEE;
     margin: 100px auto;
     padding: 20px 0;
@@ -11,7 +11,7 @@ body {
 
 .input {
     margin: 50px auto;
-    width: 800px;
+    width: 80%;
     background: #EEEEEE;
 }
 
@@ -26,3 +26,8 @@ input {
     padding: 20px 0;
 }
 
+th, td {
+    margin: 2px auto;
+    width: 12%;
+    text-align: center;
+}
