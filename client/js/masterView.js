@@ -20,6 +20,7 @@ MasterView = Simple.View.extend({
                         '<input class="calendar" id="to" name="to" type="date">  </input>' +
                         '<input id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
                         '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
+                        '<input name="size" type="number"> </input>' +
                         '<input id="submit" type="submit"/>' +
                     '</form>' +
                     '<form class="simpleSearch" id="searchType-2">' +

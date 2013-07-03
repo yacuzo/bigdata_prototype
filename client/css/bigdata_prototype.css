@@ -16,7 +16,7 @@ input, select {
 
 #results {
     border: solid #555555 1px;
-    margin: 30px auto;
+    margin: auto;
     padding: 20px 0;
     background-color: #111111;
     color: #AAAAAA;

@@ -13,14 +13,6 @@ ElasticsearchModel = Simple.Model.extend({
         this.url = options.url;
         ejs.client = ejs.jQueryClient('http://bigdata01.dev.bekk.no:9200');
     },
-//
-//    fetch: function() {
-//        this._performRequest("GET", this, {success:console.log}, {
-//            type: "GET",
-//            data: JSON.stringify(this.attributes),
-//            contentType: 'application/json'
-//        });
-//    },
 
     buildQuery: function (params) {
         var request = ejs.Request({indices:"sb1",types:"transer"});
@@ -44,12 +36,19 @@ ElasticsearchModel = Simple.Model.extend({
             filter.filters(rFilter);
         }
 
-        var query = ejs.MatchQuery(
-                        params.fullDescription.name,
-                        params.fullDescription.value
-        );
+        if (params.size.value) {
+            request.size(params.size.value);
+        }
 
-        return request.filter(filter).query(query);
+        if (params.fullDescription.value) {
+            var query = ejs.MatchQuery(
+                            params.fullDescription.name,
+                            params.fullDescription.value
+            );
+            request.query(query);
+        }
+
+        return request.filter(filter);
     },
 
     /**
