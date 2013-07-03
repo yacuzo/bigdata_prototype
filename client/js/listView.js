@@ -31,22 +31,23 @@ ListView = Simple.View.extend({
         this.el.empty().append(this.template);
 
         var table = this.$("table");
-        var results = data.hits.hits; //should be an array
 
-        for(var hit in results) {
-            var row = this.makeHTMLTableRow(results[hit]._source);
+        for(var hit in data.hits) {
+            var row = this.makeHTMLTableRow(data.hits[hit]._source);
             table.append(row);
         }
     },
 
     makeHTMLTableRow: function (hit) {
+        var date = new Date(hit.date);
+        var bokDate = new Date(hit.bokforingDate);
         var html = "<tr>";
         html += '<td>'+hit.accountNumber+'</td>';
         html += '<td>'+hit.amount+'</td>';
         html += '<td>'+hit.description+'</td>';
         html += '<td>'+hit.fullDescription+'</td>';
-        html += '<td>'+hit.date+'</td>';
-        html += '<td>'+hit.bokforingDate+'</td>';
+        html += '<td>'+date.toLocaleDateString()+'</td>';
+        html += '<td>'+bokDate.toLocaleDateString()+'</td>';
         html += '<td>'+hit.transactionCodeText+'</td>';
         html += '<td>'+hit.id+'</td>';
         html += "</tr>";

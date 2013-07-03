@@ -13,17 +13,18 @@ ElasticsearchModel = Simple.Model.extend({
         this.url = options.url;
         ejs.client = ejs.jQueryClient('http://bigdata01.dev.bekk.no:9200');
     },
-
-    fetch: function() {
-        this._performRequest("GET", this, {success:console.log}, {
-            type: "GET",
-            data: JSON.stringify(this.attributes),
-            contentType: 'application/json'
-        });
-    },
+//
+//    fetch: function() {
+//        this._performRequest("GET", this, {success:console.log}, {
+//            type: "GET",
+//            data: JSON.stringify(this.attributes),
+//            contentType: 'application/json'
+//        });
+//    },
 
     buildQuery: function (params) {
         var request = ejs.Request({indices:"sb1",types:"transer"});
+        //noinspection JSUnresolvedVariable
         var filter = ejs.AndFilter(
                                 ejs.TermFilter(
                                     params.accountNumber.name,
@@ -72,12 +73,13 @@ ElasticsearchModel = Simple.Model.extend({
         console.log("Request: "); console.log(request.toString());
 
         request.doSearch(
-            $.proxy(
-                function (data) {
-                    this.trigger("GET:done", data);
-                },
-                this)
+            $.proxy(this.searchDone, this)
         );
+    },
+
+    searchDone: function (data) {
+        var hits = data.hits.hits;
+        this.trigger("GET:done", {hits: hits, took: data.took});
     }
 
 });
