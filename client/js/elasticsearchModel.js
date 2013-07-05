@@ -11,11 +11,42 @@ var ElasticsearchModel;
 ElasticsearchModel = Simple.Model.extend({
     initialize: function(options) {
         this.url = options.url;
-        ejs.client = ejs.jQueryClient('http://bigdata01.dev.bekk.no:9200');
+        ejs.client = ejs.jQueryClient('http://el4:9200');
+        Simple.events.on("ERROR:server", this.handleError, this);
     },
 
+    dateToIntegers: function (date){
+        var integers = {};
+        integers.year = parseInt(date.getFullYear());
+        integers.month = parseInt(date.getMonth());
+        return integers;
+    },
+
+    getIndicesFromDates: function (dates) {
+        var indices = [];
+        if(dates.from && dates.to) {
+            var from = this.dateToIntegers(new Date(dates.from));
+            var to = this.dateToIntegers(new Date(dates.to));
+            var numMonths = ((to.year - from.year) * 12) + to.month - from.month + 1;
+            var year = from.year;
+            var month = from.month - 1; //bd starts months on 0...
+
+            for(numMonths; numMonths > 0; numMonths--) {
+                month++;
+                if (month >= 12) {
+                    year++;
+                    month = 0;
+                }
+                indices.push("" + year + "-" + month);
+            }
+        } else
+            indices = "_all";
+        console.log("indices: " + indices);
+        return indices;
+    },
     buildQuery: function (params) {
-        var request = ejs.Request({indices:"sb1",types:"transer"});
+        var indicesFromDate = this.getIndicesFromDates({from:params.from.value,to:params.to.value});
+        var request = ejs.Request({indices:indicesFromDate,types:"trans"});
         //noinspection JSUnresolvedVariable
         var filter = ejs.AndFilter(
                                 ejs.TermFilter(
@@ -47,7 +78,16 @@ ElasticsearchModel = Simple.Model.extend({
             );
             request.query(query);
         }
-
+        request.fields([
+            "account",
+            "fullDescription",
+            "description",
+            "date",
+            "bokforingDate",
+            "amount",
+            "transactionTypeText",
+            "id"
+        ]);
         return request.filter(filter);
     },
 
@@ -63,22 +103,43 @@ ElasticsearchModel = Simple.Model.extend({
         }
         return processedArray;
     },
-    buildAndExecuteQuery: function (dataArray) {
+    buildAndExecuteQuery: function (dataArray, typeString) {
         var dataObject = this.arrayToObject(dataArray);
+        console.log(dataObject);
+        //date strings to millis
         dataObject.to.value = new Date(dataObject.to.value).getTime();
         dataObject.from.value = new Date(dataObject.from.value).getTime();
 
-        var request = this.buildQuery(dataObject);
-        console.log("Request: "); console.log(request.toString());
+        if(typeString == "basic") {
+            var request = this.buildQuery(dataObject);
+            console.log("Request: "); console.log(request.toString());
 
-        request.doSearch(
-            $.proxy(this.searchDone, this)
-        );
+            request.doSearch(
+                $.proxy(this.searchDone, this),
+                function (errorData) {Simple.events.trigger("ERROR:server", errorData);}
+            );
+        } else
+            alert("Unsupported search type: " + typeString);
     },
 
     searchDone: function (data) {
-        var hits = data.hits.hits;
-        this.trigger("GET:done", {hits: hits, took: data.took});
+        var structuredData = this.structureDataFromServer(data);
+        this.trigger("SEARCH:done", structuredData);
+    },
+
+    handleError: function (errorData) {
+        Simple.events.trigger("ERROR:display", "Server Error!" + errorData.toString());
+    },
+
+    structureDataFromServer: function (data) {
+        console.log(data);
+        var structuredData = {hits:[]};
+        structuredData.took = data.took;
+        for(var i in data.hits.hits) {
+            structuredData.hits.push(data.hits.hits[i].fields);
+        }
+        console.log(structuredData);
+        return structuredData;
     }
 
 });

@@ -33,7 +33,7 @@ ListView = Simple.View.extend({
         var table = this.$("table");
 
         for(var hit in data.hits) {
-            var row = this.makeHTMLTableRow(data.hits[hit]._source);
+            var row = this.makeHTMLTableRow(data.hits[hit]);
             table.append(row);
         }
     },

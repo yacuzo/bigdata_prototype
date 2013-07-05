@@ -15,17 +15,17 @@ MasterView = Simple.View.extend({
                         '<li><a href="#searchType-1"><span>Enkelt søk</span></a></li>' +
                         '<li><a href="#searchType-2"><span>Aggregering</span></a></li>' +
                     '</ul>' +
-                    '<form class="simpleSearch" id="searchType-1">' +
-                        '<input class="calendar" id="from" name="from" type="date">  </input>' +
-                        '<input class="calendar" id="to" name="to" type="date">  </input>' +
+                    '<form class="simpleSearch" id="searchType-1" name="basic">' +
+                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2011-12-31"/>' +
+                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2011-12-31"/>' +
                         '<input id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
                         '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
-                        '<input name="size" type="number"> </input>' +
+                        '<input name="size" type="number" placeholder="Max Antall Treff"/>' +
                         '<input id="submit" type="submit"/>' +
                     '</form>' +
-                    '<form class="simpleSearch" id="searchType-2">' +
-                        '<input class="calendar" id="from" name="from" type="date">  </input>' +
-                        '<input class="calendar" id="to" name="to" type="date">  </input>' +
+                    '<form class="simpleSearch" id="searchType-2" name="aggregated">' +
+                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2011-12-31"/>' +
+                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2011-12-31"/>' +
                         '<input id="text" name="transactionTypeText" type="search" placeholder="Søk i trans type"/>' +
                         '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
                         '<input id="submit" type="submit"/>' +
@@ -38,11 +38,12 @@ MasterView = Simple.View.extend({
     initialize: function(options) {//constructor
         this.render();
         this.model = options.model;
-        this.model.on("GET:done", this.selectDisplay, this);
+        this.model.on("SEARCH:done", this.selectDisplay, this);
+        Simple.events.on("ERROR:display", this.displayError, this);
     },
     events: {
-        "submit .simpleSearch":"gatherData"//,
-        //"submit #submit":"submitData"
+        "submit #searchType-1":"gatherData",
+        "submit #searchType-2":"gatherData"
     }, //lytte på dom events
 
     render: function () {
@@ -65,18 +66,25 @@ MasterView = Simple.View.extend({
     gatherData: function(data) {
         data.stopPropagation();
         data.preventDefault();
-        var array = $(data.currentTarget).serializeArray();
+        var form = $(data.currentTarget);
+        var array = form.serializeArray();
         console.log(array);
-        this.model.buildAndExecuteQuery(array);
+        this.model.buildAndExecuteQuery(array, form.attr("name"));
     },
 
     selectDisplay: function(data) {
         if(this.display)
             this.display=null;
 
-        console.log(data);
         this.display = new ListView({data:data, el:this.$("#results")});
         this.$("footer").empty().append("<div>Prossesseringstid: " + data.took + "</div>");
+    },
+
+    displayError: function (string) {
+        if(this.display)
+            this.display=null;
+
+        this.$("#results").empty().text(string);
     }
 
 });
