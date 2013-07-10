@@ -16,18 +16,23 @@ MasterView = Simple.View.extend({
                         '<li><a href="#searchType-2"><span>Aggregering</span></a></li>' +
                     '</ul>' +
                     '<form class="simpleSearch" id="searchType-1" name="basic">' +
-                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2011-12-31"/>' +
-                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2011-12-31"/>' +
+                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
                         '<input id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
                         '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
                         '<input name="size" type="number" placeholder="Max Antall Treff"/>' +
                         '<input id="submit" type="submit"/>' +
                     '</form>' +
                     '<form class="simpleSearch" id="searchType-2" name="aggregated">' +
-                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2011-12-31"/>' +
-                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2011-12-31"/>' +
-                        '<input id="text" name="transactionTypeText" type="search" placeholder="Søk i trans type"/>' +
-                        '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
+                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                        '<select id="direction" name="direction">' +
+                            '<option value="base">Inn/ut</option>' +
+                            '<option value="in">Inntekter</option>' +
+                            '<option value="out">Utgifter</option>' +
+                            '<option value="sum">Sum</option>' +
+                        '</select>' +
+                        '<select id="accounts2" name="accountNumber"><option value="base">Select account</option></select>' +
                         '<input id="submit" type="submit"/>' +
                     '</form>' +
                 '</div>' +
@@ -57,7 +62,7 @@ MasterView = Simple.View.extend({
 
             for (var obj in data) {
                 //noinspection JSUnresolvedVariable
-                $("#accounts").append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
+                $("#accounts, #accounts2").append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
             }
 
         });
@@ -76,7 +81,11 @@ MasterView = Simple.View.extend({
         if(this.display)
             this.display=null;
 
-        this.display = new ListView({data:data, el:this.$("#results")});
+        if(data.display == "dateHistogram") {
+            this.display = new HistogramView({data:data, el:this.$("#results")});
+        } else {
+            this.display = new ListView({data:data, el:this.$("#results")});
+        }
         this.$("footer").empty().append("<div>Prossesseringstid: " + data.took + "</div>");
     },
 

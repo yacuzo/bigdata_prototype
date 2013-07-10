@@ -18,7 +18,7 @@ ElasticsearchModel = Simple.Model.extend({
     dateToIntegers: function (date){
         var integers = {};
         integers.year = parseInt(date.getFullYear());
-        integers.month = parseInt(date.getMonth());
+        integers.month = parseInt(date.getMonth())+1;
         return integers;
     },
 
@@ -29,44 +29,49 @@ ElasticsearchModel = Simple.Model.extend({
             var to = this.dateToIntegers(new Date(dates.to));
             var numMonths = ((to.year - from.year) * 12) + to.month - from.month + 1;
             var year = from.year;
-            var month = from.month - 1; //bd starts months on 0...
+            var month = from.month;
 
             for(numMonths; numMonths > 0; numMonths--) {
+                indices.push("" + year + "-" + ("0" + month).slice(-2));
                 month++;
-                if (month >= 12) {
+                if (month > 12) {
                     year++;
-                    month = 0;
+                    month = 1;
                 }
-                indices.push("" + year + "-" + month);
             }
         } else
             indices = "_all";
         console.log("indices: " + indices);
         return indices;
     },
+
+    makeFilterWithDateAndAccNo: function (dataObject) {
+        var filter = ejs.AndFilter(
+            ejs.TermFilter(
+                dataObject.accountNumber.name,
+                dataObject.accountNumber.value
+            ));
+
+        //adds to existing filter if dates are set
+        if(dataObject.from.value || dataObject.from.value) {
+            var rFilter = ejs.RangeFilter("bokforingDate");
+
+            if(dataObject.from.value)
+                rFilter.from(dataObject.from.value)
+
+            if(dataObject.to.value)
+                rFilter.to(dataObject.to.value)
+
+            filter.filters(rFilter);
+        }
+        return filter;
+    },
     buildQuery: function (params) {
         var indicesFromDate = this.getIndicesFromDates({from:params.from.value,to:params.to.value});
         var request = ejs.Request({indices:indicesFromDate,types:"trans"});
         //noinspection JSUnresolvedVariable
-        var filter = ejs.AndFilter(
-                                ejs.TermFilter(
-                                    params.accountNumber.name,
-                                    params.accountNumber.value
-        ));
 
-        //adds to existing filter if dates are set
-        if(params.from.value || params.from.value) {
-            var rFilter = ejs.RangeFilter("bokforingDate");
-
-            if(params.from.value)
-                rFilter.from(params.from.value)
-
-            if(params.to.value)
-                rFilter.to(params.to.value)
-
-            filter.filters(rFilter);
-        }
-
+        var filter = this.makeFilterWithDateAndAccNo(params);
         if (params.size.value) {
             request.size(params.size.value);
         }
@@ -79,15 +84,16 @@ ElasticsearchModel = Simple.Model.extend({
             request.query(query);
         }
         request.fields([
-            "account",
+            "accountNumber",
             "fullDescription",
             "description",
             "date",
             "bokforingDate",
             "amount",
-            "transactionTypeText",
+            "transactionCodeText",
             "id"
         ]);
+        request.routing(params.accountNumber.value);
         return request.filter(filter);
     },
 
@@ -103,27 +109,56 @@ ElasticsearchModel = Simple.Model.extend({
         }
         return processedArray;
     },
-    buildAndExecuteQuery: function (dataArray, typeString) {
+    buildDateFacetQuery: function (dataObject) {
+        var indicesFromDate = this.getIndicesFromDates({from:dataObject.from.value,to:dataObject.to.value});
+        var request = ejs.Request({indices:indicesFromDate,types:"trans"});
+        var filter = this.makeFilterWithDateAndAccNo(dataObject);
+        var facet = ejs.DateHistogramFacet("dateHistogram");
+
+        facet.facetFilter(filter);
+        facet.keyField("date");
+        facet.valueField("amount");
+        facet.interval("month");
+        facet.preZone(2);
+
+        request.query(ejs.MatchAllQuery());
+        request.routing(dataObject.accountNumber.value);
+        request.size(0);
+        request.facet(facet);
+
+        return request;
+    },
+    buildAndExecuteQuery: function (dataArray, type) {
         var dataObject = this.arrayToObject(dataArray);
         console.log(dataObject);
         //date strings to millis
         dataObject.to.value = new Date(dataObject.to.value).getTime();
         dataObject.from.value = new Date(dataObject.from.value).getTime();
 
-        if(typeString == "basic") {
+        if(type == "basic") {
             var request = this.buildQuery(dataObject);
-            console.log("Request: "); console.log(request.toString());
 
             request.doSearch(
                 $.proxy(this.searchDone, this),
-                function (errorData) {Simple.events.trigger("ERROR:server", errorData);}
+                this.handleError
             );
+        } else if (type == "aggregated"){
+            var request = this.buildDateFacetQuery(dataObject);
+
+            request.doSearch(
+                this.searchDone.bind(this),
+                this.handleError);
         } else
             alert("Unsupported search type: " + typeString);
     },
 
     searchDone: function (data) {
-        var structuredData = this.structureDataFromServer(data);
+        var structuredData;
+        if (data.facets) {
+            structuredData = this.structureHistogramFromServer(data);
+        } else {
+            structuredData = this.structureDataFromServer(data);
+        }
         this.trigger("SEARCH:done", structuredData);
     },
 
@@ -138,6 +173,21 @@ ElasticsearchModel = Simple.Model.extend({
         for(var i in data.hits.hits) {
             structuredData.hits.push(data.hits.hits[i].fields);
         }
+        console.log(structuredData);
+        return structuredData;
+    },
+
+    structureHistogramFromServer: function (data) {
+        console.log(data);
+        var structuredData = {entries:[]};
+        structuredData.took = data.took;
+        structuredData.display = "dateHistogram";
+        var totalCount = 0;
+        for(var i in data.facets.dateHistogram.entries) {
+            structuredData.entries.push(data.facets.dateHistogram.entries[i]);
+            totalCount += data.facets.dateHistogram.entries[i].count;
+        }
+        structuredData.totalCount = totalCount;
         console.log(structuredData);
         return structuredData;
     }
