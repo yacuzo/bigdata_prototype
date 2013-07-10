@@ -18,7 +18,12 @@
         <script type="text/javascript" src="js/masterView.js"></script>
     </head>
 	<body>
-        <div class="main"></div>
+        <div class="main">
+            <header>
+                <img id="header_logo" src="resources/sb1_logo.jpg">
+                <h1 id="header_text">Big Data Demo</h1>
+            </header>
+        </div>
         <script type="text/javascript" >
             var model = new ElasticsearchModel({url:"bigdata01.dev.bekk.no"});
             var mView = new MasterView({el:$(".main"), model:model});
