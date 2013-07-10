@@ -10,16 +10,30 @@ body {
     padding: 30px 50px;
 }
 
+.calendar {
+    font-size: 0.8em;
+}
+
+.textInput, .multiSelect {
+    font-size: 1em;
+}
+
+.numberInput {
+    font-size: 0.8em;
+}
+
+#submit {
+    font-size: 0.9em;
+}
+
 input, select {
     margin: 40px 10px;
+    border-radius: 5px;
 }
 
 #results {
-    border: solid #555555 1px;
     margin: auto;
     padding: 20px 0;
-    background-color: #111111;
-    color: #AAAAAA;
 }
 
 th, td {
@@ -45,19 +59,4 @@ footer {
 
 #searchTabs {
     margin: 0 auto;
-}
-
-.bar rect {
-    fill: steelblue;
-    shape-rendering: crispEdges;
-}
-
-.bar text {
-    fill: #fff;
-}
-
-.axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
 }

@@ -1,0 +1,190 @@
+//Div snippets for spørringer mot elasticsearch
+
+//mapping for transer
+{
+    "transer" : {
+        "properties" : {
+            "date" : {"type" : "date_time", "store" : "yes"},
+            "bokforingDate" : {"type" : "date_time", "store" : "yes"},
+            "valuteringDate" : {"type" : "date_time", "store" : "no"},
+            "posteringDate" : {"type" : "date_time", "store" : "no"},
+            "amount" : {"type" : "date_time", "store" : "yes"}
+        }
+    }
+}
+public long id;
+        public Date date;
+        public BigDecimal amount;
+        public String description;
+        public String remoteAccountNumber;
+        public BigDecimal currencyAmount;
+        public String currencyCode;
+        public boolean isConfidential;
+        public CompactCharSequence accountNumber;
+        public String fullDescription;
+        public String transactionCodeText;
+        public String transactionCode;
+        public Date valuteringDate;
+        public Date posteringDate;
+        public Date bokforingDate;
+        public String batchNumber;
+        public String archiveReference;
+        public String numbericalReference;
+
+//antall NETTBANK transaksjoner per dato
+curl -XGET bigdata01.dev.bekk.no:9200/sb1/transer/_search?search_type=count -d '
+{
+	"query" : {
+		"term" : {
+       		"transactionCodeText" : "NETTBANK"
+    	}
+	},
+	"facets" : {
+      "bokforingDate" : { "terms" : {"field" : "bokforingDate"} }
+    }
+} 
+'
+
+//"søk", så treffer også lignende verdier slik som en søkemotor
+curl -XGET bigdata01.dev.bekk.no:9200/sb1/transer/_search?q=transactionCode:_205%20accountNumber:72764826279
+
+//returnerer id til alle(max 10) transaksjoner til konto X med NETTBANK type
+{
+	"fields" : ["id"],
+	"query" : {
+		"filtered" : {
+			"filter" : {
+				"and" : [
+					{
+						"term" : {"transactionCode" : "_205"}
+					},
+					{
+						"term" : {"accountNumber" : "65277987447" }
+					}
+				]
+			}
+		}
+	}
+}
+
+//Rerturnerer statistikk for alle typer transer for konto X, fordelt på forskjellige typer
+{
+	"fields" : ["accountNumber"],
+    "query" : {
+    	"filtered" : {
+    		"filter" : {
+    			"term" : {"accountNumber" : "65277987447"}
+    		}
+    	}
+    },
+    "facets" : {
+        "type_amount_stats" : {
+            "terms_stats" : {
+                "key_field" : "transactionCode",
+                "value_field" : "amount"
+            }
+        }
+    }
+}
+
+//samme som over, men med facet filter isteden for "vanlig" filter
+//TREEEEEG
+{
+	"fields" : ["accountNumber"],
+    "facets" : {
+        "type_amount_stats" : {
+            "terms_stats" : {
+                "key_field" : "transactionCode",
+                "value_field" : "amount"
+            },
+            "facet_filter" : {
+	    		"term" : {"accountNumber" : "65277987447"}
+	    	}
+        }
+    }
+}
+
+//retrieve all trans the last month for one account
+{
+	"fields" : ["id","date", "accountNumber"], "size" : "_all",
+	"query" : {
+		"filtered" : {
+			"filter" : {
+				"and" : [
+					{
+						"range" : {
+							"date" : {
+								"from" : "1259586000625"
+							}
+						}
+					},
+					{
+						"term" : {"accountNumber" : "65277987447" }
+					}
+				]
+			}
+		}
+	}
+}
+
+//histogram test. size:0 gjør at vi ikke får base data, kun histogrammet
+{
+	"size" : 0,
+    "query" : {
+        "filtered" : {
+        	"filter" : {
+				"term" : {"accountNumber" : "15833998051" }
+			}
+        }
+    },
+    "facets" : {
+        "spending/month" : {
+            "date_histogram" : {
+                "key_field" : "date",
+                "value_field" : "amount",
+                "interval" : "month",
+                "time_zone" : 2
+            }
+        }
+    }
+}
+
+http://jprante.github.io/2012/11/28/Elasticsearch-Java-Virtual-Machine-settings-explained.html
+http://www.infoq.com/articles/Java_Garbage_Collection_Distilled
+
+//_update_by_query test via plugin
+curl -XPOST 'bigdata01.dev.bekk.no:9200/sb1/_update_by_query' -d '
+{
+    "query" : {
+        "match" : {
+            "fullDescription" : "alienations"
+        }
+    },
+    "script" : "if (ctx._source.tags.contains(tag)) {ctx._source.test = 0} else {ctx._source.test = 1}",
+}
+'
+
+//get the 15 accounts with the most transactions
+{   
+    "size" : 0,
+    "facets" : {
+        "accounts" : {
+            "terms" : {
+                "field" : "accountNumber",
+                "size" : 15
+            }
+        }
+    }
+}
+
+//get max and min date
+{
+    "size" : 0,
+    "facets" : {
+        "datestat" : {
+            "statistical" : {
+                "field" : "date"
+            }
+        }
+    }
+}

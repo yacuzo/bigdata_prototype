@@ -1,0 +1,145 @@
+//retrieve all trans the last month for one account
+//swap acc no and date
+//med settings XYZ får vi tider A-B-C. N docs tråla.
+//Test 1
+{
+	"fields" : ["id","date", "accountNumber", "description", "transactionCode", "amount", "remoteAccountNumber"],
+ 	"size" : "50",
+	"query" : {
+		"filtered" : {
+			"filter" : {
+				"and" : [
+					{
+						"range" : {
+							"date" : {
+								"from" : "1259622000000"
+							},
+							"_cache" : false
+						}
+					},
+					{
+						"term" : {
+    						"accountNumber" : 73678126984,
+    						"_cache" : false
+    					}
+					}
+				]
+			}
+		}
+	}
+}
+
+
+//histogram test. size:0 gjør at vi ikke får base data, kun histogrammet
+//må sette indices og acc no
+//Test 2
+{
+	"size" : 0,
+    "query" : {
+        "filtered" : {
+        	"filter" : {
+				"term" : {
+    				"accountNumber" : 73678126984,
+    				"_cache" : false
+    			}
+			}
+        }
+    },
+    "facets" : {
+        "spending/month" : {
+            "date_histogram" : {
+                "key_field" : "date",
+                "value_field" : "amount",
+                "interval" : "month",
+                "time_zone" : 2
+            }
+        }
+    }
+}
+
+//Rerturnerer statistikk for alle typer transer for konto X, fordelt på forskjellige typer
+//Test 3
+{
+	"fields" : ["accountNumber"],
+    "query" : {
+    	"filtered" : {
+    		"filter" : {
+    			"term" : {
+    				"accountNumber" : 73678126984,
+    				"_cache" : false
+    			}
+    		}
+    	}
+    },
+    "facets" : {
+        "type_amount_stats" : {
+            "terms_stats" : {
+                "key_field" : "transactionCode",
+                "value_field" : "amount"
+            }
+        }
+    }
+}
+
+//samme som over, men med flere konti. Husk multi routing.
+{
+  "fields": [
+    "accountNumber"
+  ],
+  "query": {
+    "filtered": {
+      "filter": {
+        "terms": {
+          "accountNumber": [
+            73678126984,
+            73676966629,
+            73673747844
+          ],
+          "execution": "bool_nocache",
+          "_cache": false
+        }
+      }
+    }
+  },
+  "facets": {
+    "type_amount_stats": {
+      "terms_stats": {
+        "key_field": "transactionCode",
+        "value_field": "amount"
+      }
+    }
+  }
+}
+
+//1 shard per index per måned,  Konto med 835K docs. | 12 GB
+//Test 1: 350, 30, 20. 35K docs.
+//Test 2: 20K, 89, 73. 835K docs.
+//Test 3: 7.2K, 123, 116. 835K docs.
+//Test 4: 2.9K(cached?) 265, 269. 2M docs.
+
+//1 shard per index per år, Konti som over | 16GB
+//Test 1: 151, 23, 27.
+//Test 2: 4.1K, 65, 66.
+//Test 3: 1.1K, 108, 109.
+//Test 4: 3.6K, 228, 226.
+
+//1 shard per index per år, Konti som over | 12GB
+//Test 1: 865, 42, 43.
+//Test 2: 5.2K, 71, 70. !: 16K etter reboot. 
+//Test 3: 1.5K, 99, 106.
+//Test 4: 3.7K, 211, 224. 
+
+
+//Update by query!
+{
+    "query" : {
+        "filtered":{
+        	"filter" : {
+            "terms" : { "transactionCode" : ["_151", "_718", "_719", "_922", "_938", "R_074", "R_079", "R_086", "V_151", "U_922", "U_938", "V_074", "V_075", "V_079", "V_086", "V_093","V_094", "V_095", "V_096", "V_097", "V_099", "U_151", "R_718", "R_719", "R_718", "R_719"]}
+        	}
+    	} 
+    },
+    "script" : "ctx._source.category = 1"
+}
+//took 241 sec på 59K docs
+//U_b_q took 75min to insert a new field in all 20M trans.

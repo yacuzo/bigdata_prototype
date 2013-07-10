@@ -18,9 +18,9 @@ MasterView = Simple.View.extend({
                     '<form class="simpleSearch" id="searchType-1" name="basic">' +
                         '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
                         '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
-                        '<input id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
-                        '<select id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
-                        '<input name="size" type="number" placeholder="Max Antall Treff"/>' +
+                        '<input class="textInput" id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
+                        '<select class="multiSelect" id="accounts" name="accountNumber"><option value="base">Select account</option></select>' +
+                        '<input class="numberInput" name="size" type="number" placeholder="Antall Treff" max="100" min="0"/>' +
                         '<input id="submit" type="submit"/>' +
                     '</form>' +
                     '<form class="simpleSearch" id="searchType-2" name="aggregated">' +
@@ -37,7 +37,7 @@ MasterView = Simple.View.extend({
                     '</form>' +
                 '</div>' +
 
-                '<div id="results"></div>' +
+                '<div id="results" class="ui-widget ui-corner-all ui-widget-content"></div>' +
                 '<footer></footer>',
 
     initialize: function(options) {//constructor
