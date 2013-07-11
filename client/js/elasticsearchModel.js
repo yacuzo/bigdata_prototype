@@ -11,7 +11,7 @@ var ElasticsearchModel;
 ElasticsearchModel = Simple.Model.extend({
     initialize: function(options) {
         this.url = options.url;
-        ejs.client = ejs.jQueryClient('http://el4:9200');
+        ejs.client = ejs.jQueryClient(this.url);
         Simple.events.on("ERROR:server", this.handleError, this);
     },
 
@@ -47,9 +47,9 @@ ElasticsearchModel = Simple.Model.extend({
 
     makeFilterWithDateAndAccNo: function (dataObject) {
         var filter = ejs.AndFilter(
-            ejs.TermFilter(
+            ejs.TermsFilter(
                 dataObject.accountNumber.name,
-                dataObject.accountNumber.value
+                dataObject.accountNumber.value.split(",")
             ));
 
         //adds to existing filter if dates are set
@@ -69,7 +69,6 @@ ElasticsearchModel = Simple.Model.extend({
     buildQuery: function (params) {
         var indicesFromDate = this.getIndicesFromDates({from:params.from.value,to:params.to.value});
         var request = ejs.Request({indices:indicesFromDate,types:"trans"});
-        //noinspection JSUnresolvedVariable
 
         var filter = this.makeFilterWithDateAndAccNo(params);
         if (params.size.value) {
@@ -80,8 +79,10 @@ ElasticsearchModel = Simple.Model.extend({
             var query = ejs.MatchQuery(
                             params.fullDescription.name,
                             params.fullDescription.value
-            );
-            request.query(query);
+            );//silly elastic.js needs a query for a filteredQuery =/
+            request.query(ejs.FilteredQuery(query, filter));
+        }else {
+            request.query(ejs.FilteredQuery(ejs.MatchAllQuery(),filter));
         }
         request.fields([
             "accountNumber",
@@ -105,7 +106,12 @@ ElasticsearchModel = Simple.Model.extend({
     arrayToObject: function (dataArray) {
         var processedArray = {};
         for(var obj in dataArray) {
-            processedArray[dataArray[obj].name] = dataArray[obj];
+            //multi-select yields multiple entries, not comma separated :(
+            if(processedArray.accountNumber && dataArray[obj].name == "accountNumber") {
+                processedArray.accountNumber.value += ","+dataArray[obj].value;
+            } else {
+                processedArray[dataArray[obj].name] = dataArray[obj];
+            }
         }
         return processedArray;
     },
@@ -118,13 +124,14 @@ ElasticsearchModel = Simple.Model.extend({
         facet.facetFilter(filter);
         facet.keyField("date");
         facet.valueField("amount");
-        facet.interval("month");
+        facet.interval(dataObject.interval.value);
         facet.preZone(2);
 
         request.query(ejs.MatchAllQuery());
         request.routing(dataObject.accountNumber.value);
         request.size(0);
         request.facet(facet);
+        this.interval = dataObject.interval.value;
 
         return request;
     },
@@ -138,18 +145,15 @@ ElasticsearchModel = Simple.Model.extend({
         if(type == "basic") {
             var request = this.buildQuery(dataObject);
 
-            request.doSearch(
-                $.proxy(this.searchDone, this),
-                this.handleError
-            );
         } else if (type == "aggregated"){
             var request = this.buildDateFacetQuery(dataObject);
 
-            request.doSearch(
-                this.searchDone.bind(this),
-                this.handleError);
         } else
             alert("Unsupported search type: " + typeString);
+
+        request.doSearch(
+            this.searchDone.bind(this),
+            this.handleError);
     },
 
     searchDone: function (data) {
@@ -182,6 +186,7 @@ ElasticsearchModel = Simple.Model.extend({
         var structuredData = {entries:[]};
         structuredData.took = data.took;
         structuredData.display = "dateHistogram";
+        structuredData.interval = this.interval;
         var totalCount = 0;
         for(var i in data.facets.dateHistogram.entries) {
             structuredData.entries.push(data.facets.dateHistogram.entries[i]);

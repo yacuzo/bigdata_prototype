@@ -17,17 +17,29 @@ HistogramView = Simple.View.extend({
 
     render: function (data) {
         this.el.append(this.template);
-        this.buildHistogram(data.entries);
+        this.buildHistogram(data.entries, data.interval);
     },
 
-    buildHistogram: function (dataSet) {
+    buildHistogram: function (dataSet, interval) {
 
-        function selectMonths(dataSet){
-            var months = [];
-            for (var month in dataSet) {
-                months.push(dateFormat(dataSet[month].time, "mmm YY"));
+        function selectInterval(dataSet, interval){
+            var intervalFormat;
+            switch (interval){
+                case "month":
+                    intervalFormat = "mmm yy";
+                    break;
+                case "day":
+                    intervalFormat = "dd\nmmm";
+                    break;
+                case "week":
+                    intervalFormat = "'Uke xx' mmm yy"
+                    break;
             }
-            return months;
+            var intervals = [];
+            for (var item in dataSet) {
+                intervals.push(dateFormat(dataSet[item].time, intervalFormat));
+            }
+            return intervals;
         }
 
         function getTotals (dataSet) {
@@ -49,7 +61,7 @@ HistogramView = Simple.View.extend({
                 text: 'SB1'
             },
             xAxis: {
-                categories: selectMonths(dataSet)
+                categories: selectInterval(dataSet, interval)
             },
             yAxis: {
                 min: 0,

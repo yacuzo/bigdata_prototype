@@ -129,6 +129,15 @@
 //Test 3: 1.5K, 99, 106.
 //Test 4: 3.7K, 211, 224. 
 
+//som over men med store på acc no, date.
+//Test 1: 1371, 36, 32
+//Test 2: 6.6k, 66, 75
+//Test 3: 2.1K, 113, 104
+//Test 4: 626, 231, 221 (3.9k etter flush/clear)
+
+//Memindex med kun 4 felter
+//Test 2: 3.2K, 67, 62
+//
 
 //Update by query!
 {
@@ -141,5 +150,66 @@
     },
     "script" : "ctx._source.category = 1"
 }
-//took 241 sec på 59K docs
+//Setup 3: 
+//took 241 sec på 59K docs, throttling 20mb
 //U_b_q took 75min to insert a new field in all 20M trans.
+//Throttling har stor innvirkning. 100mb -> 10 sec på 59K docs
+
+
+
+//Warmers!
+curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
+{
+    "query" : {
+        "match_all" : {}
+    },
+    "facets" : {
+        "account" : {
+            "statistical" : {
+                "field" : "account"
+            }
+        } 
+    }
+}
+
+{
+    "query" : {
+        "match_all" : {}
+    },
+    "facets" : {
+        "date" : {
+            "statistical" : {
+                "field" : "date"
+            }
+        } 
+    }
+}
+
+{
+    "query" : {
+        "match_all" : {}
+    },
+    "facets" : {
+        "date" : {
+            "statistical" : {
+                "field" : "amount"
+            }
+        } 
+    }
+}
+
+{
+    "query" : {
+        "match_all":{}
+    },
+    "facets" : {
+        "spending/month" : {
+            "date_histogram" : {
+                "key_field" : "date",
+                "value_field" : "amount",
+                "interval" : "month",
+                "time_zone" : 2
+            }
+        }
+    }
+}
