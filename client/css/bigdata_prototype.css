@@ -8,6 +8,7 @@ body {
     background: #EEEEEE;
     margin: 80px auto;
     padding: 30px 50px;
+    overflow: hidden;
 }
 
 .calendar {
@@ -58,4 +59,20 @@ footer {
 
 #searchTabs {
     margin: 0 auto;
+}
+
+#header_logo {
+    width: auto;
+    height: 125px;
+    margin-top: -75px;
+
+    border-left-width: 20px;
+    border-right-width: 20px;
+
+    -webkit-border-image:
+        -webkit-linear-gradient(left, white, transparent) 1 100%;
+}
+
+#header_text {
+    float: right;
 }
