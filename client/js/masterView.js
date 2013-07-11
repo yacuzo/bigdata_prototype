@@ -10,40 +10,47 @@ var MasterView;
 MasterView = Simple.View.extend({
     //el: $();
     //model: model
-    template :  '<div id="searchTabs">' +
-                    '<ul>'+
-                        '<li><a href="#searchType-1"><span>Enkelt søk</span></a></li>' +
-                        '<li><a href="#searchType-2"><span>Aggregering</span></a></li>' +
-                    '</ul>' +
-                    '<form class="simpleSearch" id="searchType-1" name="basic">' +
-                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
-                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
-                        '<input class="textInput" id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
-                        '<select class="multiSelect" id="accounts" name="accountNumber" multiple="multiple"><option value="base">Select account</option></select>' +
-                        '<input class="numberInput" name="size" type="number" placeholder="Antall Treff" max="100" min="0"/>' +
-                        '<input id="submit" type="submit"/>' +
-                    '</form>' +
-                    '<form class="simpleSearch" id="searchType-2" name="aggregated">' +
-                        '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
-                        '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
-                        '<select id="interval" name="interval">' +
-                            '<option value="month">Måned</option>' +
-                            '<option value="week">Uke</option> ' +
-                            '<option value="day">Dag</option>' +
-                        '</select>'+
-                        '<select id="direction" name="direction">' +
-                            '<option value="base">Inn/ut</option>' +
-                            '<option value="in">Inntekter</option>' +
-                            '<option value="out">Utgifter</option>' +
-                            '<option value="sum">Sum</option>' +
-                        '</select>' +
-                        '<select id="accounts2" name="accountNumber"><option value="base">Select account</option></select>' +
-                        '<input id="submit" type="submit"/>' +
-                    '</form>' +
+    template :
+        '<div id="searchTabs">' +
+            '<ul>'+
+                '<li><a href="#searchType-1"><span>Enkelt søk</span></a></li>' +
+                '<li><a href="#searchType-2"><span>Aggregering</span></a></li>' +
+            '</ul>' +
+            '<form class="simpleSearch" id="searchType-1" name="basic">' +
+                '<div class="inputContainer">' +
+                    '<label>From date:</label>' +
+                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                '<label>To date:</label>' +
+                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
                 '</div>' +
-
-                '<div id="results" class="ui-widget ui-corner-all ui-widget-content"></div>' +
-                '<footer></footer>',
+                '<input class="textInput" id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
+                '<select class="multiSelect" id="accounts" name="accountNumber" multiple="multiple"></select>' +
+                '<input class="numberInput" name="size" type="number" placeholder="Antall Treff" max="100" min="0"/>' +
+                '<input id="submit" type="submit"/>' +
+            '</form>' +
+            '<form class="simpleSearch" id="searchType-2" name="aggregated">' +
+                '<div class="inputContainer">' +
+                    '<label>From date:</label>' +
+                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                    '<label>To date:</label>' +
+                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                '</div>' +
+                '<select id="interval" name="interval">' +
+                    '<option value="month">Måned</option>' +
+                    '<option value="week">Uke</option> ' +
+                    '<option value="day">Dag</option>' +
+                '</select>'+
+                '<select id="direction" name="direction">' +
+                    '<option value="sum">Sum</option>' +
+                    '<option value="in">Inntekter</option>' +
+                    '<option value="out">Utgifter</option>' +
+                '</select>' +
+                '<select multiple="multiple" class="multiSelect" id="accounts2" name="accountNumber"></select>' +
+                '<input id="submit" type="submit"/>' +
+            '</form>' +
+        '</div>' +
+        '<div id="results" class="ui-widget ui-corner-all ui-widget-content"></div>' +
+        '<footer></footer>',
 
     initialize: function(options) {//constructor
         this.render();

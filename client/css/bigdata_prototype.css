@@ -15,6 +15,11 @@ body {
     font-size: 0.8em;
 }
 
+.inputContainer {
+    display: inline-block;
+    max-width: 13em;
+}
+
 .textInput, .multiSelect {
     font-size: 1em;
 }
@@ -27,8 +32,12 @@ body {
     font-size: 0.9em;
 }
 
+.multiSelect {
+    height: 6.5em;
+}
+
 input, select {
-    margin: 40px 10px;
+    margin: 1em 10px;
 }
 
 #results {

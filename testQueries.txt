@@ -165,7 +165,8 @@
 //took 241 sec på 59K docs, throttling 20mb
 //U_b_q took 75min to insert a new field in all 20M trans.
 //Throttling har stor innvirkning. 100mb -> 10 sec på 59K docs
-
+//SSD throtling 200mb-> ca 75min på new field 20M
+//19sec på 59K docs. 8.6sec på run 2.
 
 
 //Warmers!
@@ -245,11 +246,11 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
     "properties": {
       "accountNumber": {
         "type": "long",
-        "postings_format":"memory"
+        "postings_format": "memory"
       },
       "amount": {
         "type": "double",
-        "postings_format":"memory"
+        "postings_format": "memory"
       },
       "archiveReference": {
         "type": "integer"
@@ -259,7 +260,7 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
       },
       "bokforingDate": {
         "type": "long",
-        "precision_step" : 2
+        "precision_step": 2
       },
       "category": {
         "type": "short"
@@ -272,8 +273,8 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
       },
       "date": {
         "type": "long",
-        "postings_format":"memory",
-        "precision_step" : 2
+        "postings_format": "memory",
+        "precision_step": 2
       },
       "description": {
         "type": "string"
@@ -286,18 +287,18 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
       },
       "numbericalReference": {
         "type": "integer",
-        "index" : "no"
+        "index": "no"
       },
       "posteringDate": {
         "type": "long",
-        "index" : "no",
+        "index": "no"
       },
       "remoteAccountNumber": {
         "type": "long"
       },
       "transactionCode": {
         "type": "string",
-        "index" "not_analyzed"
+        "index": "not_analyzed"
       },
       "valuteringDate": {
         "type": "long",
