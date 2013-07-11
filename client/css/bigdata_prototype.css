@@ -65,12 +65,15 @@ footer {
     width: auto;
     height: 125px;
     margin-top: -75px;
+    margin-left: 20px;
 
-    -webkit-box-shadow: 0px 0px 3px 5px white;
-    -moz-box-shadow: 0px 0px 3px 5px white;
-    box-shadow: 0px 0px 20px 5px white;
+    -webkit-box-shadow: 0px 0px 20px 20px white;
+    -moz-box-shadow: 0px 0px 20px 20px white;
+    box-shadow: 0px 0px 20px 20px white;
 }
 
 #header_text {
     float: right;
+    margin: 0px auto;
+    margin-right: 50px;
 }
