@@ -137,7 +137,18 @@
 
 //Memindex med kun 4 felter
 //Test 2: 3.2K, 67, 62
-//
+
+//SSD ingen store, 1 shard/index
+//Test 1: 126, 29, 28
+//Test 2: 3.2k, 66, 61
+//Test 3: 988, 95, 93
+//Test 4: 236, 193, 205
+//SSD med warmers
+//Test 1: 18, 20, 16
+//Test 2: 62, 64, 64
+//Test 3: 276, 99, 96
+//Test 4: 208, 207, 204
+
 
 //Update by query!
 {
@@ -166,7 +177,7 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
     "facets" : {
         "account" : {
             "statistical" : {
-                "field" : "account"
+                "field" : "accountNumber"
             }
         } 
     }
@@ -212,4 +223,86 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
             }
         }
     }
+}
+
+
+{
+    "query" : {
+        "match_all" : {}
+    },
+    "facets" : {
+        "codeText" : {
+            "terms" : {
+                "field" : "transactionCodeText"
+            }
+        } 
+    }
+}
+
+//Mapping v1
+{
+  "trans": {
+    "properties": {
+      "accountNumber": {
+        "type": "long",
+        "postings_format":"memory"
+      },
+      "amount": {
+        "type": "double",
+        "postings_format":"memory"
+      },
+      "archiveReference": {
+        "type": "integer"
+      },
+      "batchNumber": {
+        "type": "integer"
+      },
+      "bokforingDate": {
+        "type": "long",
+        "precision_step" : 2
+      },
+      "category": {
+        "type": "short"
+      },
+      "currencyAmount": {
+        "type": "double"
+      },
+      "currencyCode": {
+        "type": "string"
+      },
+      "date": {
+        "type": "long",
+        "postings_format":"memory",
+        "precision_step" : 2
+      },
+      "description": {
+        "type": "string"
+      },
+      "id": {
+        "type": "long"
+      },
+      "isConfidential": {
+        "type": "boolean"
+      },
+      "numbericalReference": {
+        "type": "integer",
+        "index" : "no"
+      },
+      "posteringDate": {
+        "type": "long",
+        "index" : "no",
+      },
+      "remoteAccountNumber": {
+        "type": "long"
+      },
+      "transactionCode": {
+        "type": "string",
+        "index" "not_analyzed"
+      },
+      "valuteringDate": {
+        "type": "long",
+        "index": "no"
+      }
+    }
+  }
 }
