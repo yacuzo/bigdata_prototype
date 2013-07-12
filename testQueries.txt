@@ -149,6 +149,11 @@
 //Test 3: 276, 99, 96
 //Test 4: 208, 207, 204
 
+//Bloom_pulse
+//Test 1: 87, 34, 30
+//Test 2: 3.6K, 62, 60
+//Test 3: 1.0, 97, 98
+//Test 4: 224, 222, 198
 
 //Update by query!
 {
