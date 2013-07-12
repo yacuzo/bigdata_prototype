@@ -307,3 +307,69 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
     }
   }
 }
+
+//Mapping v2
+{
+  "trans": {
+    "properties": {
+      "accountNumber": {
+        "type": "long",
+        "postings_format": "bloom_pulsing"
+      },
+      "amount": {
+        "type": "double",
+        "postings_format": "bloom_pulsing"
+      },
+      "archiveReference": {
+        "type": "integer"
+      },
+      "batchNumber": {
+        "type": "integer"
+      },
+      "bokforingDate": {
+        "type": "long"
+      },
+      "category": {
+        "type": "short"
+      },
+      "currencyAmount": {
+        "type": "double"
+      },
+      "currencyCode": {
+        "type": "string"
+      },
+      "date": {
+        "type": "long",
+        "postings_format": "bloom_pulsing"
+      },
+      "description": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer"
+      },
+      "isConfidential": {
+        "type": "boolean"
+      },
+      "numbericalReference": {
+        "type": "integer",
+        "index": "no"
+      },
+      "posteringDate": {
+        "type": "long",
+        "index": "no"
+      },
+      "remoteAccountNumber": {
+        "type": "long"
+      },
+      "transactionCode": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "valuteringDate": {
+        "type": "long",
+        "index": "no"
+      }
+    }
+  }
+}

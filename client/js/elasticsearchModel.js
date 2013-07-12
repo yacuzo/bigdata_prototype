@@ -9,10 +9,12 @@
 var ElasticsearchModel;
 
 ElasticsearchModel = Simple.Model.extend({
+
     initialize: function(options) {
         this.url = options.url;
         ejs.client = ejs.jQueryClient(this.url);
         Simple.events.on("ERROR:server", this.handleError, this);
+        Simple.events.on("list:getNextPage", this.getNextPage, this);
     },
 
     dateToIntegers: function (date){
@@ -144,6 +146,7 @@ ElasticsearchModel = Simple.Model.extend({
 
         if(type == "basic") {
             var request = this.buildQuery(dataObject);
+            this.lastQuery = dataObject;
 
         } else if (type == "aggregated"){
             var request = this.buildDateFacetQuery(dataObject);
@@ -171,18 +174,16 @@ ElasticsearchModel = Simple.Model.extend({
     },
 
     structureDataFromServer: function (data) {
-        console.log(data);
         var structuredData = {hits:[]};
-        structuredData.took = data.took;
         for(var i in data.hits.hits) {
             structuredData.hits.push(data.hits.hits[i].fields);
         }
-        console.log(structuredData);
+        structuredData.totalHits = data.hits.total;
+        structuredData.took = data.took;
         return structuredData;
     },
 
     structureHistogramFromServer: function (data) {
-        console.log(data);
         var structuredData = {entries:[]};
         structuredData.took = data.took;
         structuredData.display = "dateHistogram";
@@ -193,8 +194,21 @@ ElasticsearchModel = Simple.Model.extend({
             totalCount += data.facets.dateHistogram.entries[i].count;
         }
         structuredData.totalCount = totalCount;
-        console.log(structuredData);
         return structuredData;
+    },
+
+    getNextPage: function (options) {
+        var request = this.buildQuery(this.lastQuery);
+        request.size(options.perPage);
+        request.from(options.page * options.perPage);
+        request.doSearch(
+            this.nextPageReady.bind(this),
+            this.handleError);
+    },
+
+    nextPageReady: function(data) {
+        var structuredData = this.structureDataFromServer(data);
+        Simple.events.trigger("list:displayNextPage", structuredData);
     }
 
 });

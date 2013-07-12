@@ -33,11 +33,12 @@ body {
 }
 
 .multiSelect {
-    height: 6.5em;
+    height: 8.5em;
+    margin: 0 1em;
 }
 
 input, select {
-    margin: 1em 10px;
+    margin: 1em 1em;
 }
 
 #results {
