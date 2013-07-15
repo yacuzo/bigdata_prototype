@@ -17,8 +17,7 @@ ListView = Simple.View.extend({
         '<tr>' +
             '<th>Konto</th>' +
             '<th>Sum</th>' +
-            '<th>Beskrivelse</th>' +
-            '<th>Full Beskrivelse</th>' +
+            '<th class="wide">Beskrivelse</th>' +
             '<th>Dato</th>' +
             '<th>Bokførings Dato</th>' +
             '<th>Transaksjon type</th>' +
@@ -68,10 +67,9 @@ ListView = Simple.View.extend({
         html += '<td>'+hit.accountNumber+'</td>';
         html += '<td>'+hit.amount+'</td>';
         html += '<td>'+hit.description+'</td>';
-        html += '<td>'+hit.fullDescription+'</td>';
         html += '<td>'+date.toLocaleDateString()+'</td>';
         html += '<td>'+bokDate.toLocaleDateString()+'</td>';
-        html += '<td>'+hit.transactionCodeText+'</td>';
+        html += '<td>'+hit.transactionCode+'</td>';
         html += '<td>'+hit.id+'</td>';
         html += "</tr>";
         return html;

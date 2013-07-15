@@ -23,9 +23,18 @@ MasterView = Simple.View.extend({
                 '<label>To date:</label>' +
                     '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
                 '</div>' +
-                '<input class="textInput" id="text" name="fullDescription" type="search" placeholder="Søk i beskrivelse"/>' +
+                '<div class="freeText">' +
+                    '<label>Fritekstsøk:</label>' +
+                    '<select name="searchField">' +
+                        '<option value="description">Beskrivelse</option>' +
+                    '</select>' +
+                    '<input class="textInput" id="text" name="freeText" type="search" placeholder="Søketekst"/>' +
+                '</div>' +
                 '<select class="multiSelect" id="accounts" name="accountNumber" multiple="multiple"></select>' +
-                '<input class="numberInput" name="size" type="number" placeholder="Antall Treff" max="100" min="0"/>' +
+                '<div class="numHitsContainer">' +
+                    '<label>Antall treff per side: </label>'+
+                    '<input class="numberInput" name="size" type="number" placeholder="10" max="100" min="0"/>' +
+                '</div>' +
                 '<input id="submit" type="submit"/>' +
             '</form>' +
             '<form class="simpleSearch" id="searchType-2" name="aggregated">' +

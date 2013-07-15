@@ -17,7 +17,19 @@ body {
 
 .inputContainer {
     display: inline-block;
+    max-width: 12em;
+    padding: 0 1em;
+}
+
+.numHitsContainer {
+    max-width: 18em;
+    display: inline-block;
+}
+
+.freeText {
+    display: inline-block;
     max-width: 13em;
+    padding: 0 1em;
 }
 
 .textInput, .multiSelect {
@@ -26,10 +38,13 @@ body {
 
 .numberInput {
     font-size: 0.8em;
+    width: 3.4em;
+    text-align: right;
 }
 
 #submit {
     font-size: 0.9em;
+    float: right;
 }
 
 .multiSelect {
@@ -38,7 +53,7 @@ body {
 }
 
 input, select {
-    margin: 1em 1em;
+    margin: 1em 0;
 }
 
 #results {

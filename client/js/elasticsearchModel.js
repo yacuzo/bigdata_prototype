@@ -22,24 +22,18 @@ ElasticsearchModel = Simple.Model.extend({
         integers.year = parseInt(date.getFullYear());
         integers.month = parseInt(date.getMonth())+1;
         return integers;
+        //TODO cleanup, nothing uses month?
     },
 
     getIndicesFromDates: function (dates) {
+        //TODO when dateToIntegers is cleaned, clean this
         var indices = [];
         if(dates.from && dates.to) {
             var from = this.dateToIntegers(new Date(dates.from));
             var to = this.dateToIntegers(new Date(dates.to));
-            var numMonths = ((to.year - from.year) * 12) + to.month - from.month + 1;
-            var year = from.year;
-            var month = from.month;
-
-            for(numMonths; numMonths > 0; numMonths--) {
-                indices.push("" + year + "-" + ("0" + month).slice(-2));
-                month++;
-                if (month > 12) {
-                    year++;
-                    month = 1;
-                }
+            var tmp = from.year;
+            for (tmp; tmp < to.year; tmp++) {
+                indices.push("" + tmp);
             }
         } else
             indices = "_all";
@@ -77,10 +71,10 @@ ElasticsearchModel = Simple.Model.extend({
             request.size(params.size.value);
         }
 
-        if (params.fullDescription.value) {
+        if (params.freeText.value) {
             var query = ejs.MatchQuery(
-                            params.fullDescription.name,
-                            params.fullDescription.value
+                            params.searchField.value,
+                            params.freeText.value
             );//silly elastic.js needs a query for a filteredQuery =/
             request.query(ejs.FilteredQuery(query, filter));
         }else {
@@ -88,12 +82,11 @@ ElasticsearchModel = Simple.Model.extend({
         }
         request.fields([
             "accountNumber",
-            "fullDescription",
             "description",
             "date",
             "bokforingDate",
             "amount",
-            "transactionCodeText",
+            "transactionCode",
             "id"
         ]);
         request.routing(params.accountNumber.value);
