@@ -1,36 +1,5 @@
 //Div snippets for spørringer mot elasticsearch
 
-//mapping for transer
-{
-    "transer" : {
-        "properties" : {
-            "date" : {"type" : "date_time", "store" : "yes"},
-            "bokforingDate" : {"type" : "date_time", "store" : "yes"},
-            "valuteringDate" : {"type" : "date_time", "store" : "no"},
-            "posteringDate" : {"type" : "date_time", "store" : "no"},
-            "amount" : {"type" : "date_time", "store" : "yes"}
-        }
-    }
-}
-public long id;
-        public Date date;
-        public BigDecimal amount;
-        public String description;
-        public String remoteAccountNumber;
-        public BigDecimal currencyAmount;
-        public String currencyCode;
-        public boolean isConfidential;
-        public CompactCharSequence accountNumber;
-        public String fullDescription;
-        public String transactionCodeText;
-        public String transactionCode;
-        public Date valuteringDate;
-        public Date posteringDate;
-        public Date bokforingDate;
-        public String batchNumber;
-        public String archiveReference;
-        public String numbericalReference;
-
 //antall NETTBANK transaksjoner per dato
 curl -XGET bigdata01.dev.bekk.no:9200/sb1/transer/_search?search_type=count -d '
 {

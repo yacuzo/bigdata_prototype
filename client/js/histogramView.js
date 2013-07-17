@@ -10,6 +10,16 @@
 var HistogramView;
 HistogramView = Simple.View.extend({
     template: '<div id=chart></div>',
+    categories : [
+        "Minibank", "Kiosk", "Dagligvarer",
+        "Mat", "Idrettsutstyr", "Bil",
+        "Hus", "Klær og sko", "Elektronikk",
+        "Fritid", "Reise", "Underholdning",
+        "Uteliv", "Diverse 1", "Diverse 2",
+        "Diverse 3", "Diverse 4", "Diverse 5",
+        "Diverse 6", "Diverse 7", "Diverse 8",
+        "Diverse 9", "Diverse 10", "Diverse 11",
+        "Diverse 12", "Diverse 13", "Diverse 14"],
 
     initialize: function (options) {
         this.render(options.data);
@@ -22,8 +32,9 @@ HistogramView = Simple.View.extend({
 
     buildHistogram: function (dataSet, interval) {
 
-        function selectInterval(dataSet, interval){
+        function selectInterval(dataSet, interval, categories){
             var intervalFormat;
+            var intervals = [];
             switch (interval){
                 case "month":
                     intervalFormat = "mmm yy";
@@ -34,8 +45,11 @@ HistogramView = Simple.View.extend({
                 case "week":
                     intervalFormat = "'Uke xx' mmm yy"
                     break;
+                case "category":
+                    for (var category in dataSet)
+                        intervals.push(categories[dataSet[category].term]);
+                    return intervals;
             }
-            var intervals = [];
             for (var item in dataSet) {
                 intervals.push(dateFormat(dataSet[item].time, intervalFormat));
             }
@@ -61,7 +75,7 @@ HistogramView = Simple.View.extend({
                 text: 'SB1'
             },
             xAxis: {
-                categories: selectInterval(dataSet, interval)
+                categories: selectInterval(dataSet, interval, this.categories)
             },
             yAxis: {
                 min: 0,

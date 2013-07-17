@@ -14,14 +14,15 @@ MasterView = Simple.View.extend({
         '<div id="searchTabs">' +
             '<ul>'+
                 '<li><a href="#searchType-1"><span>Enkelt søk</span></a></li>' +
-                '<li><a href="#searchType-2"><span>Aggregering</span></a></li>' +
+                '<li><a href="#searchType-2"><span>Tidsaggregering</span></a></li>' +
+                '<li><a href="#searchType-3"><span>Kategoriaggregering</span></a></li>' +
             '</ul>' +
             '<form class="simpleSearch" id="searchType-1" name="basic">' +
                 '<div class="inputContainer">' +
                     '<label>From date:</label>' +
-                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
                 '<label>To date:</label>' +
-                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
                 '</div>' +
                 '<div class="freeText">' +
                     '<label>Fritekstsøk:</label>' +
@@ -37,12 +38,32 @@ MasterView = Simple.View.extend({
                 '</div>' +
                 '<input id="submit" type="submit"/>' +
             '</form>' +
-            '<form class="simpleSearch" id="searchType-2" name="aggregated">' +
+            '<form class="simpleSearch" id="searchType-2" name="time-aggregated">' +
                 '<div class="inputContainer">' +
                     '<label>From date:</label>' +
-                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
                     '<label>To date:</label>' +
-                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2009-12-31"/>' +
+                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
+                '</div>' +
+                '<select id="interval" name="interval">' +
+                    '<option value="month">Måned</option>' +
+                    '<option value="week">Uke</option> ' +
+                    '<option value="day">Dag</option>' +
+                '</select>'+
+                '<select id="direction" name="direction">' +
+                    '<option value="sum">Sum</option>' +
+                    '<option value="in">Inntekter</option>' +
+                    '<option value="out">Utgifter</option>' +
+                '</select>' +
+                '<select multiple="multiple" class="multiSelect" id="accounts2" name="accountNumber"></select>' +
+                '<input id="submit" type="submit"/>' +
+            '</form>' +
+            '<form class="simpleSearch" id="searchType-3" name="category-aggregated">' +
+                '<div class="inputContainer">' +
+                    '<label>From date:</label>' +
+                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
+                    '<label>To date:</label>' +
+                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
                 '</div>' +
                 '<select id="interval" name="interval">' +
                     '<option value="month">Måned</option>' +
@@ -70,7 +91,8 @@ MasterView = Simple.View.extend({
     },
     events: {
         "submit #searchType-1":"gatherData",
-        "submit #searchType-2":"gatherData"
+        "submit #searchType-2":"gatherData",
+        "submit #searchType-3":"gatherData"
     }, //lytte på dom events
 
     render: function () {
@@ -82,10 +104,9 @@ MasterView = Simple.View.extend({
     fillAccountList: function () {
         $.getJSON("textdata/accounts.json", function(data) {
 
-            for (var obj in data) {
-                //noinspection JSUnresolvedVariable
-                $("#accounts, #accounts2").append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
-            }
+            for (var obj in data)
+                $("#accounts, #accounts2")
+                    .append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
 
         });
     },
@@ -95,7 +116,7 @@ MasterView = Simple.View.extend({
         data.preventDefault();
         var form = $(data.currentTarget);
         var array = form.serializeArray();
-        console.log(array);
+        console.log(array); //DEBUG
         this.model.buildAndExecuteQuery(array, form.attr("name"));
     },
 
@@ -107,7 +128,7 @@ MasterView = Simple.View.extend({
         this.$("#results").empty().off("click");
 
         var footer = this.$("footer").empty();
-        if(data.display == "dateHistogram") {
+        if(data.display == "histogram") {
             this.display = new HistogramView({data:data, el:this.$("#results")});
         } else {
             this.display = new ListView({data:data, el:this.$("#results")});

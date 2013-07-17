@@ -114,7 +114,7 @@ ElasticsearchModel = Simple.Model.extend({
         var indicesFromDate = this.getIndicesFromDates({from:dataObject.from.value,to:dataObject.to.value});
         var request = ejs.Request({indices:indicesFromDate,types:"trans"});
         var filter = this.makeFilterWithDateAndAccNo(dataObject);
-        var facet = ejs.DateHistogramFacet("dateHistogram");
+        var facet = ejs.DateHistogramFacet("histogram");
 
         facet.facetFilter(filter);
         facet.keyField("date");
@@ -130,6 +130,26 @@ ElasticsearchModel = Simple.Model.extend({
 
         return request;
     },
+
+    buildCategoryFacetQuery: function (dataObject) {
+        var indicesFromDate = this.getIndicesFromDates({from:dataObject.from.value,to:dataObject.to.value});
+        var request = ejs.Request({indices:indicesFromDate,types:"trans"});
+        var filter = this.makeFilterWithDateAndAccNo(dataObject);
+        var facet = ejs.TermStatsFacet("histogram");
+
+        facet.facetFilter(filter);
+        facet.keyField("category");
+        facet.valueField("amount");
+
+        request.query(ejs.MatchAllQuery());
+        request.routing(dataObject.accountNumber.value);
+        request.size(0);
+        request.facet(facet);
+        this.interval = "category";
+
+        return request;
+    },
+
     buildAndExecuteQuery: function (dataArray, type) {
         var dataObject = this.arrayToObject(dataArray);
         console.log(dataObject);
@@ -137,14 +157,18 @@ ElasticsearchModel = Simple.Model.extend({
         dataObject.to.value = new Date(dataObject.to.value).getTime();
         dataObject.from.value = new Date(dataObject.from.value).getTime();
 
+        var request;
         if(type == "basic") {
-            var request = this.buildQuery(dataObject);
+            request = this.buildQuery(dataObject);
             this.lastQuery = dataObject;
 
-        } else if (type == "aggregated"){
-            var request = this.buildDateFacetQuery(dataObject);
+        } else if (type == "time-aggregated"){
+            request = this.buildDateFacetQuery(dataObject);
 
-        } else
+        } else if (type == "category-aggregated") {
+            request = this.buildCategoryFacetQuery(dataObject);
+
+        }else
             alert("Unsupported search type: " + typeString);
 
         request.doSearch(
@@ -160,6 +184,7 @@ ElasticsearchModel = Simple.Model.extend({
         } else {
             structuredData = this.structureDataFromServer(data);
         }
+        console.log(structuredData); //DEBUG
         this.trigger("SEARCH:done", structuredData);
     },
 
@@ -180,12 +205,13 @@ ElasticsearchModel = Simple.Model.extend({
     structureHistogramFromServer: function (data) {
         var structuredData = {entries:[]};
         structuredData.took = data.took;
-        structuredData.display = "dateHistogram";
+        structuredData.display = "histogram";
         structuredData.interval = this.interval;
+        var entryName = (this.interval == "category") ? "terms" : "entries";
         var totalCount = 0;
-        for(var i in data.facets.dateHistogram.entries) {
-            structuredData.entries.push(data.facets.dateHistogram.entries[i]);
-            totalCount += data.facets.dateHistogram.entries[i].count;
+        for(var i in data.facets.histogram[entryName]) {
+            structuredData.entries.push(data.facets.histogram[entryName][i]);
+            totalCount += data.facets.histogram[entryName][i].count;
         }
         structuredData.totalCount = totalCount;
         return structuredData;
