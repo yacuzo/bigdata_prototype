@@ -42,21 +42,20 @@ ListView = Simple.View.extend({
     },
 
     render: function(data) {
+        var rows = "";
+        for(var hit in data.hits) {
+            rows += this.makeHTMLTableRow(data.hits[hit]);
+        }
+
         this.el.empty().append(this.template);
-
-
         var table = this.$("table");
         table.attr("name", this.currentPage);
-
-        for(var hit in data.hits) {
-            var row = this.makeHTMLTableRow(data.hits[hit]);
-            table.append(row);
-        }
+        table.append(rows);
 
         if (data.hits.length < data.totalHits) {
             this.el.append(this.pagingTemplate);
-            this.totalHits = data.totalHits;
         }
+        this.totalHits = data.totalHits;
         this.hitsPerPage = data.hits.length;
     },
 
@@ -76,13 +75,18 @@ ListView = Simple.View.extend({
     },
 
     nextPage: function () {
-        if (this.currentPage * this.hitsPerPage < this.totalHits) {
+        var hitsShown = this.currentPage * this.hitsPerPage;
+        console.log("current: " + this.currentPage + " perPage: " + this.hitsPerPage);
+        if (hitsShown < this.totalHits) {
             var pageToShow = this.$("table[name='" + (this.currentPage +1) + "']");
             if (pageToShow.length > 0) {
+                this.currentPage++;
                 pageToShow.prev().hide();
                 pageToShow.show();
             }else
                 Simple.events.trigger("list:getNextPage", {page:this.currentPage, perPage: this.hitsPerPage});
+        } else {
+            console.log("no more pages");
         }
         return false;//to stop propagation
     },
@@ -99,10 +103,13 @@ ListView = Simple.View.extend({
 
         this.currentPage++;
         newPage.attr("name", this.currentPage);
-        $("footer").empty().append("<div>Prossesseringstid: " + data.took + "</div>");
+        $("footer").empty()
+                .append("<span class='footerEntry'>Prossesseringstid: " + data.took + "</span>")
+                .append("<span class='footerEntry'>Antall treff: " + this.totalHits + "</span>");
     },
 
     prevPage: function () {
+
         console.log("Trying prev page!");
         if (this.currentPage > 1) {
             var pageToShow = this.$("table[name='" + (this.currentPage -1) + "']");

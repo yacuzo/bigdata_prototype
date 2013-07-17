@@ -100,17 +100,20 @@ MasterView = Simple.View.extend({
     },
 
     selectDisplay: function(data) {
-        if(this.display)
+        if(this.display) {
             this.display=null;
+        }
 
-        this.$("#results").empty();
+        this.$("#results").empty().off("click");
 
+        var footer = this.$("footer").empty();
         if(data.display == "dateHistogram") {
             this.display = new HistogramView({data:data, el:this.$("#results")});
         } else {
             this.display = new ListView({data:data, el:this.$("#results")});
+            footer.append("<span class='footerEntry'>Antall treff: " + data.totalHits + "</span>");
         }
-        this.$("footer").empty().append("<div>Prossesseringstid: " + data.took + "</div>");
+        footer.prepend("<span class='footerEntry'>Prossesseringstid: " + data.took + "</span>");
     },
 
     displayError: function (string) {
