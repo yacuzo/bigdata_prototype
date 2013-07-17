@@ -237,6 +237,14 @@
   }
 }
 
+//Settings før update
+curl -XPUT el1:9200/_settings -d
+{
+  "index": {
+    "refresh_interval": -1,
+    "translog.disable_flush": true
+  }
+}
 //Update by query!
 {
     "query" : {
@@ -245,6 +253,17 @@
             "terms" : { "transactionCode" : ["_151", "_718", "_719", "_922", "_938", "R_074", "R_079", "R_086", "V_151", "U_922", "U_938", "V_074", "V_075", "V_079", "V_086", "V_093","V_094", "V_095", "V_096", "V_097", "V_099", "U_151", "R_718", "R_719", "R_718", "R_719"]}
         	}
     	} 
+    },
+    "script" : "ctx._source.category = 1"
+}
+//v2
+{
+    "query" : {
+        "filtered":{
+          "filter" : {
+            "query" : { "match" : {"description":"anew"}}
+          }
+      } 
     },
     "script" : "ctx._source.category = 1"
 }
@@ -272,29 +291,17 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
 }
 
 {
-    "query" : {
-        "match_all" : {}
-    },
-    "facets" : {
-        "date" : {
-            "statistical" : {
-                "field" : "date"
-            }
-        } 
+  "query": {
+    "match_all": {}
+  },
+  "facets": {
+    "type_amount_stats": {
+      "terms_stats": {
+        "key_field": "category",
+        "value_field": "amount"
+      }
     }
-}
-
-{
-    "query" : {
-        "match_all" : {}
-    },
-    "facets" : {
-        "date" : {
-            "statistical" : {
-                "field" : "amount"
-            }
-        } 
-    }
+  }
 }
 
 {
@@ -461,3 +468,6 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
     }
   }
 }
+
+//Stats for field cache
+curl -XGET el2:9200/_stats/fielddata/category,amount,date,accountNumber?pretty

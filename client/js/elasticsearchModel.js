@@ -32,7 +32,7 @@ ElasticsearchModel = Simple.Model.extend({
             var from = this.dateToIntegers(new Date(dates.from));
             var to = this.dateToIntegers(new Date(dates.to));
             var tmp = from.year;
-            for (tmp; tmp < to.year; tmp++) {
+            for (tmp; tmp <= to.year; tmp++) {
                 indices.push("" + tmp);
             }
         } else
@@ -150,6 +150,7 @@ ElasticsearchModel = Simple.Model.extend({
         request.doSearch(
             this.searchDone.bind(this),
             this.handleError);
+        this.trigger("SEARCH:started");
     },
 
     searchDone: function (data) {

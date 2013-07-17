@@ -102,3 +102,8 @@ footer {
     margin: 0px auto;
     margin-right: 50px;
 }
+
+#ajaxLoader {
+    display: block;
+    margin: 10px auto;
+}

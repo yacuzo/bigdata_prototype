@@ -69,7 +69,12 @@ HistogramView = Simple.View.extend({
                     text: 'NOK'
                 },
                 label: {
-                    format: "{value:,.0f}"
+                    formatter: function() {
+                        if (this.value < 1000000000)
+                            return this.value;
+                        else
+                            return this.value / 1000000000 + "mrd";
+                    }
                 }
             },
             tooltip: {

@@ -66,6 +66,7 @@ MasterView = Simple.View.extend({
         this.model = options.model;
         this.model.on("SEARCH:done", this.selectDisplay, this);
         Simple.events.on("ERROR:display", this.displayError, this);
+        this.model.on("SEARCH:started", this.showLoader, this);
     },
     events: {
         "submit #searchType-1":"gatherData",
@@ -102,6 +103,8 @@ MasterView = Simple.View.extend({
         if(this.display)
             this.display=null;
 
+        this.$("#results").empty();
+
         if(data.display == "dateHistogram") {
             this.display = new HistogramView({data:data, el:this.$("#results")});
         } else {
@@ -115,6 +118,11 @@ MasterView = Simple.View.extend({
             this.display=null;
 
         this.$("#results").empty().text(string);
+    },
+
+    showLoader: function () {
+        var loader = '<img id="ajaxLoader" src="resources/ajax-loader.gif" />';
+        this.$("#results").empty().append(loader);
     }
 
 });
