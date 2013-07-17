@@ -43,11 +43,11 @@ HistogramView = Simple.View.extend({
                     intervalFormat = "dd\nmmm";
                     break;
                 case "week":
-                    intervalFormat = "'Uke xx' mmm yy"
+                    intervalFormat = "'Uke xx' mmm yy";
                     break;
                 case "category":
                     for (var category in dataSet)
-                        intervals.push(categories[dataSet[category].term]);
+                            intervals.push(categories[dataSet[category].term]);
                     return intervals;
             }
             for (var item in dataSet) {

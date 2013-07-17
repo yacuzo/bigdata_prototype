@@ -92,15 +92,14 @@ footer {
     margin-top: -75px;
     margin-left: 20px;
 
-    -webkit-box-shadow: 0px 0px 20px 20px white;
-    -moz-box-shadow: 0px 0px 20px 20px white;
-    box-shadow: 0px 0px 20px 20px white;
+    -webkit-box-shadow: 0 0 20px 20px white;
+    -moz-box-shadow: 0 0 20px 20px white;
+    box-shadow: 0 0 20px 20px white;
 }
 
 #header_text {
     float: right;
-    margin: 0px auto;
-    margin-right: 50px;
+    margin: 0 50px 0 auto;
 }
 
 #ajaxLoader {

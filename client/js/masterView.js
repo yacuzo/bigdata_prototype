@@ -105,8 +105,10 @@ MasterView = Simple.View.extend({
         $.getJSON("textdata/accounts.json", function(data) {
 
             for (var obj in data)
-                $("#accounts, #accounts2")
-                    .append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
+                { //noinspection JSUnfilteredForInLoop
+                    $("#accounts, #accounts2")
+                                        .append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
+                }
 
         });
     },
