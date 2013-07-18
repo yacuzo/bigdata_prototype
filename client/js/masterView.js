@@ -65,16 +65,6 @@ MasterView = Simple.View.extend({
                     '<label>To date:</label>' +
                     '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
                 '</div>' +
-                '<select id="interval" name="interval">' +
-                    '<option value="month">Måned</option>' +
-                    '<option value="week">Uke</option> ' +
-                    '<option value="day">Dag</option>' +
-                '</select>'+
-                '<select id="direction" name="direction">' +
-                    '<option value="sum">Sum</option>' +
-                    '<option value="in">Inntekter</option>' +
-                    '<option value="out">Utgifter</option>' +
-                '</select>' +
                 '<select multiple="multiple" class="multiSelect" id="accounts2" name="accountNumber"></select>' +
                 '<input id="submit" type="submit"/>' +
             '</form>' +
