@@ -111,3 +111,19 @@ footer {
     width: 200px;
     margin-right: 10px;
 }
+
+.pagingContainer {
+    height: 3em;
+}
+
+#prevPage {
+    float: left;
+    margin-left: 1em;
+    margin-top: 1em;
+}
+
+#nextPage {
+    float: right;
+    margin-right: 1em;
+    margin-top: 1em;
+}

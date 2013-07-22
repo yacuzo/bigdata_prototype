@@ -10,6 +10,17 @@ var MasterView;
 MasterView = Simple.View.extend({
     //el: $();
     //model: model
+    //category:["cat1","cat2",...]
+    formBaseContentTemplate:
+        '<div class="inputContainer">' +
+            '<label>From date:</label>' +
+            '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
+            '<label>To date:</label>' +
+            '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
+        '</div>' +
+        '<select class="multiSelect accounts" name="accountNumber" multiple="multiple" required></select>' +
+        '<select class="multiSelect categories" name="category" multiple="multiple"></select>',
+
     template :
         '<div id="searchTabs">' +
             '<ul>'+
@@ -18,12 +29,6 @@ MasterView = Simple.View.extend({
                 '<li><a href="#searchType-3"><span>Kategoriaggregering</span></a></li>' +
             '</ul>' +
             '<form class="simpleSearch" id="searchType-1" name="basic">' +
-                '<div class="inputContainer">' +
-                    '<label>From date:</label>' +
-                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
-                '<label>To date:</label>' +
-                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
-                '</div>' +
                 '<div class="freeText">' +
                     '<label>Fritekstsøk:</label>' +
                     '<select name="searchField">' +
@@ -31,7 +36,6 @@ MasterView = Simple.View.extend({
                     '</select>' +
                     '<input class="textInput" id="text" name="freeText" type="search" placeholder="Søketekst"/>' +
                 '</div>' +
-                '<select class="multiSelect" id="accounts" name="accountNumber" multiple="multiple"></select>' +
                 '<div class="numHitsContainer">' +
                     '<label>Antall treff per side: </label>'+
                     '<input class="numberInput" name="size" type="number" placeholder="10" max="100" min="0"/>' +
@@ -39,12 +43,6 @@ MasterView = Simple.View.extend({
                 '<input id="submit" type="submit"/>' +
             '</form>' +
             '<form class="simpleSearch" id="searchType-2" name="time-aggregated">' +
-                '<div class="inputContainer">' +
-                    '<label>From date:</label>' +
-                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
-                    '<label>To date:</label>' +
-                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
-                '</div>' +
                 '<select id="interval" name="interval">' +
                     '<option value="month">Måned</option>' +
                     '<option value="week">Uke</option> ' +
@@ -55,17 +53,9 @@ MasterView = Simple.View.extend({
                     '<option value="in">Inntekter</option>' +
                     '<option value="out">Utgifter</option>' +
                 '</select>' +
-                '<select multiple="multiple" class="multiSelect" id="accounts2" name="accountNumber"></select>' +
                 '<input id="submit" type="submit"/>' +
             '</form>' +
             '<form class="simpleSearch" id="searchType-3" name="category-aggregated">' +
-                '<div class="inputContainer">' +
-                    '<label>From date:</label>' +
-                    '<input class="calendar" name="from" type="date" min="2008-01-01" max="2010-12-31"/>' +
-                    '<label>To date:</label>' +
-                    '<input class="calendar" name="to" type="date" min="2008-01-01" max="2010-12-31"/>' +
-                '</div>' +
-                '<select multiple="multiple" class="multiSelect" id="accounts2" name="accountNumber"></select>' +
                 '<input id="submit" type="submit"/>' +
             '</form>' +
         '</div>' +
@@ -87,20 +77,31 @@ MasterView = Simple.View.extend({
 
     render: function () {
         this.el.append(this.template);
+        this.$("form").prepend(this.formBaseContentTemplate);
         this.fillAccountList();
+        this.fillCategoryList();
+
         this.$("#searchTabs").tabs();
     },
 
     fillAccountList: function () {
         $.getJSON("textdata/accounts.json", function(data) {
-
-            for (var obj in data)
-                { //noinspection JSUnfilteredForInLoop
-                    $("#accounts, #accounts2")
-                                        .append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
-                }
-
+            var accounts = $(".accounts");
+            for (var obj in data) { //noinspection JSUnfilteredForInLoop
+                    accounts.append("<option value='" + data[obj].account + "'>" + data[obj].account + "</option>")
+            }
         });
+    },
+
+    fillCategoryList: function () {
+        var that = this;
+        $.getJSON("textdata/categories.json", function (data) {
+            var categories = $(".categories");
+            for (var i in data) {
+                categories.append("<option value='"+i+"'>"+data[i]+"</option>");
+            }
+            that.category = data;
+        })
     },
 
     gatherData: function(data) {
@@ -129,11 +130,12 @@ MasterView = Simple.View.extend({
         footer.prepend("<span class='footerEntry'>Prossesseringstid: " + data.took + "</span>");
     },
 
-    displayError: function (string) {
+    displayError: function (obj) {
         if(this.display)
             this.display=null;
 
-        this.$("#results").empty().text(string);
+        this.$("#results").empty().text(obj.msg);
+        console.log(obj.data);
     },
 
     showLoader: function () {

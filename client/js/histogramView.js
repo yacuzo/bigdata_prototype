@@ -84,10 +84,11 @@ HistogramView = Simple.View.extend({
                 },
                 label: {
                     formatter: function() {
-                        if (this.value < 1000000000)
+                        if (this.value < 1000000000) {
                             return this.value;
-                        else
+                        } else {
                             return this.value / 1000000000 + "mrd";
+                        }
                     }
                 }
             },

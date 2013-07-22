@@ -20,6 +20,7 @@ ListView = Simple.View.extend({
             '<th class="wide">Beskrivelse</th>' +
             '<th>Dato</th>' +
             '<th>Bokførings Dato</th>' +
+            '<th>Kategori</th>' +
             '<th>Transaksjon type</th>' +
             '<th>Id</th>' +
         '</tr>' +
@@ -68,6 +69,7 @@ ListView = Simple.View.extend({
         html += '<td>'+hit.description+'</td>';
         html += '<td>'+date.toLocaleDateString()+'</td>';
         html += '<td>'+bokDate.toLocaleDateString()+'</td>';
+        html += '<td>'+hit.category+'</td>';
         html += '<td>'+hit.transactionCode+'</td>';
         html += '<td>'+hit.id+'</td>';
         html += "</tr>";

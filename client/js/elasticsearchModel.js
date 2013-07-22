@@ -17,22 +17,14 @@ ElasticsearchModel = Simple.Model.extend({
         Simple.events.on("list:getNextPage", this.getNextPage, this);
     },
 
-    dateToIntegers: function (date){
-        var integers = {};
-        integers.year = parseInt(date.getFullYear());
-        integers.month = parseInt(date.getMonth())+1;
-        return integers;
-        //TODO cleanup, nothing uses month?
-    },
-
     getIndicesFromDates: function (dates) {
-        //TODO when dateToIntegers is cleaned, clean this
         var indices = [];
         if(dates.from && dates.to) {
-            var from = this.dateToIntegers(new Date(dates.from));
-            var to = this.dateToIntegers(new Date(dates.to));
-            var tmp = from.year;
-            for (tmp; tmp <= to.year; tmp++) {
+
+            var from = new Date(dates.from).getFullYear();
+            var to = new Date(dates.to).getFullYear();
+            var tmp = from;
+            for (tmp; tmp <= to; tmp++) {
                 indices.push("" + tmp);
             }
         } else
@@ -41,7 +33,8 @@ ElasticsearchModel = Simple.Model.extend({
         return indices;
     },
 
-    makeFilterWithDateAndAccNo: function (dataObject) {
+    makeFilterWithDateAccNoCategory: function (dataObject) {
+
         var filter = ejs.AndFilter(
             ejs.TermsFilter(
                 dataObject.accountNumber.name,
@@ -60,26 +53,36 @@ ElasticsearchModel = Simple.Model.extend({
 
             filter.filters(rFilter);
         }
+
+        if (dataObject.category) {
+            var categoryFilter = ejs.TermsFilter(dataObject.category.name, dataObject.category.value.split(","));
+            filter.filters(categoryFilter);
+        }
+
         return filter;
     },
+
     buildQuery: function (params) {
         var indicesFromDate = this.getIndicesFromDates({from:params.from.value,to:params.to.value});
         var request = ejs.Request({indices:indicesFromDate,types:"trans"});
 
-        var filter = this.makeFilterWithDateAndAccNo(params);
+        var filter = this.makeFilterWithDateAccNoCategory(params);
+
         if (params.size.value) {
             request.size(params.size.value);
         }
 
+        var query;
         if (params.freeText.value) {
-            var query = ejs.MatchQuery(
+            query = ejs.MatchQuery(
                             params.searchField.value,
                             params.freeText.value
-            );//silly elastic.js needs a query for a filteredQuery =/
-            request.query(ejs.FilteredQuery(query, filter));
+            );
         }else {
-            request.query(ejs.FilteredQuery(ejs.MatchAllQuery(),filter));
+            query = ejs.MatchAllQuery();
         }
+        request.query(ejs.FilteredQuery(query,filter));
+
         request.fields([
             "accountNumber",
             "description",
@@ -87,7 +90,8 @@ ElasticsearchModel = Simple.Model.extend({
             "bokforingDate",
             "amount",
             "transactionCode",
-            "id"
+            "id",
+            "category"
         ]);
         request.routing(params.accountNumber.value);
         return request.filter(filter);
@@ -101,19 +105,20 @@ ElasticsearchModel = Simple.Model.extend({
     arrayToObject: function (dataArray) {
         var processedArray = {};
         for(var obj in dataArray) {
-            //multi-select yields multiple entries, not comma separated :(
-            if(processedArray.accountNumber && dataArray[obj].name == "accountNumber") {
-                processedArray.accountNumber.value += ","+dataArray[obj].value;
+            //multi-select is converted to a single comma separated field.
+            if(processedArray[dataArray[obj].name]) {
+                processedArray[dataArray[obj].name].value += ","+dataArray[obj].value;
             } else {
                 processedArray[dataArray[obj].name] = dataArray[obj];
             }
         }
         return processedArray;
     },
+
     buildDateFacetQuery: function (dataObject) {
         var indicesFromDate = this.getIndicesFromDates({from:dataObject.from.value,to:dataObject.to.value});
         var request = ejs.Request({indices:indicesFromDate,types:"trans"});
-        var filter = this.makeFilterWithDateAndAccNo(dataObject);
+        var filter = this.makeFilterWithDateAccNoCategory(dataObject);
         var facet = ejs.DateHistogramFacet("histogram");
 
         facet.facetFilter(filter);
@@ -134,7 +139,7 @@ ElasticsearchModel = Simple.Model.extend({
     buildCategoryFacetQuery: function (dataObject) {
         var indicesFromDate = this.getIndicesFromDates({from:dataObject.from.value,to:dataObject.to.value});
         var request = ejs.Request({indices:indicesFromDate,types:"trans"});
-        var filter = this.makeFilterWithDateAndAccNo(dataObject);
+        var filter = this.makeFilterWithDateAccNoCategory(dataObject);
         var facet = ejs.TermStatsFacet("histogram");
 
         facet.facetFilter(filter);
@@ -168,8 +173,9 @@ ElasticsearchModel = Simple.Model.extend({
         } else if (type == "category-aggregated") {
             request = this.buildCategoryFacetQuery(dataObject);
 
-        }else
+        }else {
             alert("Unsupported search type: " + typeString);
+        }
 
         request.doSearch(
             this.searchDone.bind(this),
@@ -189,7 +195,7 @@ ElasticsearchModel = Simple.Model.extend({
     },
 
     handleError: function (errorData) {
-        Simple.events.trigger("ERROR:display", "Server Error!" + errorData.toString());
+        Simple.events.trigger("ERROR:display", {msg:"Server Error!", data:errorData});
     },
 
     structureDataFromServer: function (data) {
