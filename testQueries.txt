@@ -470,5 +470,23 @@ curl -XPUT el5:9200/_all/_warmer/warmer_1 -d
   }
 }
 
+{
+  "fields":["category"],
+  "size": 30,
+  "query" : {
+    "filtered":{
+      "query": {
+        "match" : {
+          "description":"ana"
+        }
+      },
+      "filter" : {
+        "not" : {
+          "term" : {"category" : 5}
+        }
+      } 
+    }
+  }
+}   
 //Stats for field cache
 curl -XGET el2:9200/_stats/fielddata/category,amount,date,accountNumber?pretty

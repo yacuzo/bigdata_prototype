@@ -1,0 +1,21 @@
+Eksisterende løsning
+Hva er problemet
+Oppgaven vår
+	* Spesielle utfordringer
+Potensielle teknologier
+	* mongoDB
+	* Elasticsearch
+	* Hazelcast
+Elasticsearch
+	* Hva er det
+	* Løsninger på utfordringer
+	* Nye utfordringer (update by query)
+Indeksering
+	* Java API
+	* Plugin
+	* Resultater
+Spørringer
+	* Gatling
+	* Resultater
+Konklusjon
+Spørsmål
