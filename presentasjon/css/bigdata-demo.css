@@ -70,6 +70,20 @@ a:focus {
     box-sizing:         border-box;
 }
 
+h2 {
+    font-size: 1.5em;
+    margin: 1.5em auto 1em auto;
+}
+
+.step > div {
+    display: inline-block;
+    position: absolute;
+}
+
+pre {
+    font-size: 0.7em;
+    line-height: 1.1em;
+}
 /*
     ... and we enhance the styles for impress.js.
 
@@ -94,7 +108,7 @@ a:focus {
     width: 900px;
     height: 700px;
 
-    background-color: #CCCCCC;
+    background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
 
@@ -102,6 +116,22 @@ a:focus {
     text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
 
     letter-spacing: -1px;
+}
+
+.fakeFrame {
+    width: 900px;
+    height: 700px;
+    display: block;
+}
+
+img {
+    position: absolute;
+} 
+
+ul {
+    position: absolute;
+    font-size: 0.8em;
+    list-style: disc;
 }
 
 .slide q {
@@ -130,6 +160,176 @@ a:focus {
     line-height: 1.2em;
 }
 
+
+
+#dblist {
+    left: 38%;
+    top: 32%;
+}
+
+#clientlist {
+    left: 62%;
+    top: 76%;
+}
+
+#dbimg {
+    height: 25%;
+    left: 15%;
+    top: 25%;
+}
+
+#svgarrow {
+    position: absolute;
+    top: 50%;
+    left: 32%;
+}
+
+#clientimg {
+    height: 25%;
+    top: 66%;
+    left: 38%;
+}
+
+#problem img {
+    max-height: 90%;
+    margin-top: 4%;
+    display: block;
+    left: 25%;
+}
+
+#andre {
+    height: 35%;
+    border-radius: 45%;
+    top: 45%;
+    left: 20%;
+}
+
+#torkil {
+    height: 35%;
+    border-radius: 45%;
+    top: 15%;
+    left: 60%;
+}
+
+#elasticimg {
+    height: 40%;
+    left: 20%;
+    top: 55%;
+}
+
+#mongoimg {
+    width: 25%;
+    top: 15%;
+    left: 10%;
+}
+
+#hazelimg {
+    width: 25%;
+    left: 60%;
+    top: 25%;
+}
+
+#hvaEr h2{
+    color: #73b53e;
+}
+
+
+#hvaErList {
+    left: 18%;
+    top: 31%;
+    line-height: 3.5em;
+}
+
+#clusterimg {
+    position: absolute;
+    top: 37%;
+    left: 45%;
+    -webkit-transform: scale(0.6,0.6);
+}
+
+#losningList {
+    font-size: 1.8em;
+    line-height: 3em;
+    top: 20%;
+    left: 20%;
+}
+
+.centerWrapper {
+    font-size: 2.5em;
+    top: 45%;
+    left: 20%;
+}
+
+#delayed {
+    opacity: 0;
+    -webkit-transition: opacity 1s 1.5s;
+    -transition: opacity 1s 1.5s;
+    margin: 0;
+}
+
+#eller.present #delayed {
+    opacity: 1;
+}
+
+#esIssues {
+    padding-left: 2em;
+    padding-top: 1em;
+}
+
+#esIssues div {
+    height: 10%;
+    width: 35%;
+}
+
+#esIssues span {
+    position: relative;
+    top: -25%;
+}
+
+#esIssues img {
+    height: 100%;
+    position: relative;
+}
+
+#ytelse {
+    top: 35%;
+    left: 10%;
+}
+
+#kategori {
+    top: 65%;
+    left: 20%;
+}
+
+#nyTech {
+    top: 45%;
+    left: 60%;
+}
+
+#try1 {
+    padding-left: 2em;
+}
+
+#try1 > h2 > span{
+    font-size: 0.6em;
+}
+
+#slow {
+    opacity: 0;
+}
+
+#slow.active {
+    opacity: 1;
+    -webkit-transition: opacity 0.7s;
+    -transition: opacity 0.7s;
+}
+
+#slow > img {
+    height: 70%;
+    top: 25%;
+    left: 55%;
+    box-shadow: 3px 5px 6px rgba(0, 0, 250, .1);
+}
 /*
     Sparer på dette i tilfelle 3d effekter...
 

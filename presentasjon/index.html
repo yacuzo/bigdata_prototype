@@ -31,17 +31,108 @@
         <p class="centerText">BigData med Elasticsearch</p>
     </div>
 
-    <div id="problem" class="step slide" data-x="0" data-y="-1500">
-        <q class="centerText">Problemet</q>
+    <div id="eksisterende" class="step slide" data-x="0" data-y="-1500">
+        <h2 class="centerText">Eksisterende løsning</h2>
+        <img id="dbimg" src="images/db.png"/>
+        <ul id="dblist">
+            <li>Ingen aggregering</li>
+            <li>Sender kun rå data</li>
+        </ul>
+        <svg id="svgarrow" xmlns="http://www.w3.org/2000/svg" version="1.1" height="150px" width="150px">
+            <line x1 = "0" y1 = "0" x2 = "90" y2 = "130" stroke = "darkgrey" stroke-width = "3"/>
+        </svg>
+        <img id="clientimg" src="images/client.png"/>
+        <ul id="clientlist">
+            <li>Sorterer og beregner</li>
+            <li>Maks 20 000 tuper</li>
+        </ul>
+    </div>
+
+    <div id="problem" class="step slide" data-x="1000" data-y="-1500">
+        <img src="images/elephant.png">
+    </div>
+
+    <div id="oss" class="step slide" data-x="2000" data-y="-1500">
+        <img id="andre" src="images/André.jpeg"/><img id="torkil" src="images/Torkil.jpeg"/>
+    </div>
+
+    <div id="tech" class="step slide" data-x="3000" data-y="-1500">
+        <img id="elasticimg" src="images/elasticsearch.jpg"/> 
+        <img id="mongoimg" src="images/MongoDB.png"/> 
+        <img id="hazelimg" src="images/hazelcast.jpg"/>
+    </div>
+
+    <div id="hvaEr" class="step slide" data-x="-1000" data-y="-700">
+        <h2 class="centerText">Elasticsearch</h2>    
+        <ul id="hvaErList">
+            <li>Søkemotor</li>
+            <li>Distribuert</li>
+            <li>Rask og fleksibel</li>
+        </ul>
+        <embed id="clusterimg" src="images/cluster.svg" type="image/svg+xml" />
+    </div>
+
+    <div id="losninger" class="step slide" data-x="0000" data-y="-700">
+        <ul id="losningList">
+            <li>Kategori som eget felt</li>
+            <li>Aggregering på server</li>
+        </ul>
+    </div>
+
+    <div id="eller" class="step slide" data-x="1000" data-y="-700">
+        <div class="centerWrapper"> 
+            <span>Problem solved<span id="delayed">?</span></span>
+        </div>
+    </div>
+
+    <div id="esIssues" class="step slide" data-x="2000" data-y="-700">
+        <h2>Nye Utfordringer</h1>
+        <div id="ytelse"><img src="images/lightning-icon.png" /><span>Ytelse</span></div>
+        <div id="kategori"><img src="images/update.png" /><span>Oppdatere Kategori</div>
+        <div id="nyTech"><img src="images/scientist.jpeg" /><span>Ny Teknologi</div>
+    </div>
+
+    <div id="try1" class="step slide" data-x="-1000" data-y="100">
+        <h2>Setup 1 - <span>"Ut av boksen" på VM</span></h2>
+        <!-- preformatted, aka ikke kødd med formateringen-->
+        <pre>   {
+    "size" : 0,
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "term" : {
+                    "accountNumber" : 73678126984
+                }
+            }
+        }
+    },
+    "facets" : {
+        "spending/month" : {
+            "date_histogram" : {
+                "key_field" : "date",
+                "value_field" : "amount",
+                "interval" : "month"
+            }
+        }
+    }
+}   </pre>
+    </div>
+
+    <div id="slow" class="step fakeFrame" data-x="-1000" data-y="100">
+        <img src="images/slow.png" />
+    </div>
+
+    <div id="test2" class="step slide" data-x="0000" data-y="100">
     </div>
 
     <div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10">
+
     </div>
 
 </div>
 <!--
     
-    Now that's the core element used by impress.js.
+    Div with id=impress is the core element used by impress.js.
     
     That's the wrapper for your presentation steps. In this element all the impress.js magic happens.
     It doesn't have to be a `<div>`. Only `id` is important here as that's how the script find it.
@@ -61,7 +152,7 @@
     
 -->
 <!--
-        
+        Settings for steps:
         So to make a summary of all the possible attributes used to position presentation steps, we have:
         
         * `data-x`, `data-y`, `data-z` - they define the position of **the center** of step element on
