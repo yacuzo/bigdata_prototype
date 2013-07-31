@@ -130,8 +130,7 @@ curl -XPOST 'bigdata01.dev.bekk.no:9200/sb1/_update_by_query' -d '
         }
     },
     "script" : "if (ctx._source.tags.contains(tag)) {ctx._source.test = 0} else {ctx._source.test = 1}",
-}
-'
+}'
 
 //get the 15 accounts with the most transactions
 {   

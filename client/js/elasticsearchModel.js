@@ -191,6 +191,8 @@ ElasticsearchModel = Simple.Model.extend({
             structuredData = this.structureDataFromServer(data);
         }
         console.log(structuredData); //DEBUG
+        structuredData = this.convertAmountsToKrString(structuredData);
+
         this.trigger("SEARCH:done", structuredData);
     },
 
@@ -220,6 +222,25 @@ ElasticsearchModel = Simple.Model.extend({
             totalCount += data.facets.histogram[entryName][i].count;
         }
         structuredData.totalCount = totalCount;
+        return structuredData;
+    },
+
+    convertAmountsToKrString: function (structuredData) {
+        if(structuredData.hits) {
+            var hits =  structuredData.hits;
+            for (var hit in hits) {
+                console.log();
+                hits[hit].amount = (hits[hit].amount/100).toFixed(2);
+            }
+        }
+        if (structuredData.entries) {
+            var entries = structuredData.entries;
+            for (var entry in entries) {
+                entries[entry].total = (entries[entry].total/100).toFixed(2);
+            }
+        }
+        console.log(structuredData.hits);console.log(structuredData.entries);
+        console.log(structuredData);
         return structuredData;
     },
 

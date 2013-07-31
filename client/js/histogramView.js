@@ -59,7 +59,7 @@ HistogramView = Simple.View.extend({
         function getTotals (dataSet) {
             var totals = [];
             for (var total in dataSet) {
-                totals.push(dataSet[total].total);
+                totals.push(parseFloat(dataSet[total].total));
             }
             return totals;
         }
@@ -82,10 +82,12 @@ HistogramView = Simple.View.extend({
                 title: {
                     text: 'NOK'
                 },
-                label: {
+                labels: {
                     formatter: function() {
-                        if (this.value < 1000000000) {
+                        if (this.value < 1000000) {
                             return this.value;
+                        } else if (this.value < 1000000000) {
+                            return this.value / 1000000 + "mill";
                         } else {
                             return this.value / 1000000000 + "mrd";
                         }

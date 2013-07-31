@@ -1,0 +1,125 @@
+Warmers:
+{
+  "query" : {
+      "match_all" : {}
+  },
+  "facets" : {
+    "type_amount_stats": {
+      "terms_stats": {
+        "key_field": "accountNumber",
+        "value_field": "amount"
+      }
+    }
+  }
+}
+
+{
+  "query": {
+    "match_all": {}
+  },
+  "facets": {
+    "type_amount_stats": {
+      "terms_stats": {
+        "key_field": "category",
+        "value_field": "amount"
+      }
+    }
+  }
+}
+
+{
+    "query" : {
+        "match_all":{}
+    },
+    "facets" : {
+        "spending/month" : {
+            "date_histogram" : {
+                "key_field" : "date",
+                "value_field" : "amount",
+                "interval" : "month",
+                "time_zone" : 2
+            }
+        }
+    }
+}
+
+
+{
+    "query" : {
+        "match_all" : {}
+    },
+    "facets": {
+    "type_amount_stats": {
+      "terms_stats": {
+        "key_field": "transactionCode",
+        "value_field": "amount"
+      }
+    }
+  }
+}
+
+Mapping:
+{
+  "trans": {
+    "properties": {
+      "accountNumber": {
+        "type": "long",
+        "postings_format": "bloom_pulsing"
+      },
+      "amount": {
+        "type": "long",
+        "postings_format": "bloom_pulsing"
+      },
+      "archiveReference": {
+        "type": "integer"
+      },
+      "batchNumber": {
+        "type": "integer"
+      },
+      "bokforingDate": {
+        "type": "long"
+      },
+      "category": {
+        "type": "short"
+      },
+      "currencyAmount": {
+        "type": "double"
+      },
+      "currencyCode": {
+        "type": "string"
+      },
+      "date": {
+        "type": "long",
+        "postings_format": "bloom_pulsing"
+      },
+      "description": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer"
+      },
+      "isConfidential": {
+        "type": "boolean"
+      },
+      "numbericalReference": {
+        "type": "integer",
+        "index": "no"
+      },
+      "posteringDate": {
+        "type": "long",
+        "index": "no"
+      },
+      "remoteAccountNumber": {
+        "type": "long"
+      },
+      "transactionCode": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "valuteringDate": {
+        "type": "long",
+        "index": "no"
+      }
+    }
+  }
+}
