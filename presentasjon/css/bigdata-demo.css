@@ -84,6 +84,16 @@ pre {
     font-size: 0.7em;
     line-height: 1.1em;
 }
+
+.subtitle {
+    font-size: 1.1em;
+    padding-left: 2em;
+    margin-top: -1em;
+}
+
+.fat {
+    font-weight: bold;
+}
 /*
     ... and we enhance the styles for impress.js.
 
@@ -263,7 +273,7 @@ ul {
 #delayed {
     opacity: 0;
     -webkit-transition: opacity 1s 1.5s;
-    -transition: opacity 1s 1.5s;
+    transition: opacity 1s 1.5s;
     margin: 0;
 }
 
@@ -306,6 +316,38 @@ ul {
     left: 60%;
 }
 
+#indeksering {
+    padding-left: 2em;
+}
+
+.ordsky {
+    font-size: 0.8em;
+    margin: 0.05em 0.5em;
+    line-height: 1em;
+    float: right;
+}
+
+#ordsky-wrapper {
+    width: 47%;
+    left: 43%;
+}
+
+#felter {
+    top: 32%;
+    left: 25%;
+    font-size: 1.1em;
+}
+
+#insert {
+    top: 69%;
+    left: 15%;
+}
+
+.insertType {
+    display: inline-block;
+    margin: 0 1.2em;
+}
+
 #try1 {
     padding-left: 2em;
 }
@@ -321,7 +363,7 @@ ul {
 #slow.active {
     opacity: 1;
     -webkit-transition: opacity 0.7s;
-    -transition: opacity 0.7s;
+    transition: opacity 0.7s;
 }
 
 #slow > img {
@@ -330,6 +372,142 @@ ul {
     left: 55%;
     box-shadow: 3px 5px 6px rgba(0, 0, 250, .1);
 }
+
+#try2 {
+    padding-left: 3em;
+    padding-top: 3em;
+}
+
+#indekser {
+    top: 36%;
+    left: 26%;
+}
+
+#mill {
+    top: 43%;
+    left: 34%;
+}
+
+#routing {
+    top: 49%;
+    left: 42%;
+}
+
+#snail {
+    opacity: 0;
+}
+
+#snail.active {
+    opacity: 1;
+}
+
+#snailgif {
+    top: 80%;
+    left: 10%;
+}
+
+#snail.active #snailgif {
+    left: 80%;
+    -webkit-transition: left 15s;
+    transition: left 15s;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+}
+
+#seconds {
+    top: 65%;
+    left: 60%;
+    font-size: 5em;
+}
+
+#final {
+    padding-left: 2em;
+}
+
+#mapping {
+    top: 20%;
+    left: 20%;
+}
+
+#mermill {
+    top: 28%;
+    left: 28%;
+}
+
+#peraar {
+    top: 36%;
+    left: 36%;
+}
+
+#warmers {
+    top: 44%;
+    left: 44%;
+}
+
+#nyan {
+    opacity: 0;
+}
+
+#nyan.active {
+    opacity: 1;
+}
+
+#gatlingimg {
+    opacity: 0;
+    top: 69%;
+    left: 15%;
+}
+
+#gatling {
+    opacity: 0;
+    top: 73%;
+    left: 50%;
+}
+
+#nyan.active #gatling,  #nyan.active #gatlingimg {
+    opacity: 1;
+    -webkit-transition: opacity 0.5s 1.3s;
+    transition: opacity 0.5s 1.3s;
+}
+
+#nyanimg {
+    top: 56%;
+    left: -144%;
+}
+
+#nyan.active #nyanimg {
+    left: 200%;
+    -webkit-transition: left 2s ;
+    transition: left 2s;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+}
+
+#konklusjon {
+    padding-left: 2em;
+}
+
+#prorap {
+    top: 25%;
+    left: 15%;
+}
+
+#tekrap {
+    top: 40%;
+    left: 15%;
+}
+
+#tekstfil {
+    top: 55%;
+    left: 15%;
+}
+
+#demolink {
+    top: 80%;
+    left: 55%;
+}
+
+
 /*
     Sparer på dette i tilfelle 3d effekter...
 
