@@ -1,3 +1,17 @@
+_cluster/settings som bør settes permanent:
+{
+  "persistent": {
+    "indices.store.throttle.type": "none"
+  }
+}
+
+_settings som bør settes permanent:
+{
+  "index": {
+    "refresh_interval": -1,
+    "translog.disable_flush": true
+}
+
 Warmers:
 {
   "query" : {

@@ -141,7 +141,6 @@ img {
 ul {
     position: absolute;
     font-size: 0.8em;
-    list-style: disc;
 }
 
 .slide q {
@@ -507,7 +506,15 @@ ul {
     left: 55%;
 }
 
+#videre {
+    padding-left: 3em;
+}
 
+#videreList {
+    left: 26%;
+    top: 25%;
+    line-height: 3.5em;
+}
 /*
     Sparer på dette i tilfelle 3d effekter...
 
