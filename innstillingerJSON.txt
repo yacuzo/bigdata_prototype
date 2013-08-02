@@ -10,6 +10,7 @@ _settings som bør settes permanent:
   "index": {
     "refresh_interval": -1,
     "translog.disable_flush": true
+  }
 }
 
 Warmers:

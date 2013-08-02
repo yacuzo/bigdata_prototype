@@ -123,6 +123,7 @@ MasterView = Simple.View.extend({
         var footer = this.$("footer").empty();
         if(data.display == "histogram") {
             this.display = new HistogramView({data:data, el:this.$("#results")});
+            footer.append("<span class='footerEntry'>Antall transer: " + data.totalCount + "</span>");
         } else {
             this.display = new ListView({data:data, el:this.$("#results")});
             footer.append("<span class='footerEntry'>Antall treff: " + data.totalHits + "</span>");

@@ -87,7 +87,7 @@ pre {
 
 .subtitle {
     font-size: 1.1em;
-    padding-left: 2em;
+    padding-left: 1em;
     margin-top: -1em;
 }
 
@@ -155,21 +155,21 @@ ul {
     text-align: center;
 }
 
-#start {
-    padding-top: 7.5em;
+#startSubtitle {
+    top: 60%;
+    left: 21%;
+    font-size: 1.5em;
 }
-
-#start q{
-    font-size: 3em;
-    line-height: 1.2em;
-} 
 
 #start p {
     font-size: 2em;
     line-height: 1.2em;
 }
 
-
+#sbLogo {
+    width: 90%;
+    margin-left: 6%;
+}
 
 #dblist {
     left: 38%;
@@ -373,23 +373,28 @@ ul {
 }
 
 #try2 {
-    padding-left: 3em;
+    padding-left: 2em;
     padding-top: 3em;
+    background-image: url('../images/rack.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 395px top;
+    background-size: 46% auto;
 }
 
 #indekser {
     top: 36%;
-    left: 26%;
+    left: 14%;
 }
 
 #mill {
     top: 43%;
-    left: 34%;
+    left: 19%;
 }
 
 #routing {
     top: 49%;
-    left: 42%;
+    left: 24%;
 }
 
 #snail {
